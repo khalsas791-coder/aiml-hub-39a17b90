@@ -8,6 +8,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { ArrowLeft, Calculator, Plus, Trash2, GraduationCap } from 'lucide-react';
 import { toast } from 'sonner';
+import NetworkBackground from '@/components/NetworkBackground';
 
 interface Subject {
   id: string;
@@ -122,59 +123,61 @@ export default function CalculatorPage() {
   };
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen relative">
+      <NetworkBackground />
+      
       {/* Header */}
-      <header className="sticky top-0 z-50 bg-background/80 backdrop-blur-xl border-b border-border/50">
+      <header className="sticky top-0 z-50 glass-strong">
         <div className="container flex items-center h-16 px-4 gap-4">
           <Button 
             variant="ghost" 
             size="icon"
             onClick={() => navigate('/dashboard')}
-            className="rounded-full"
+            className="rounded-full hover:shadow-glow-sm transition-all"
           >
             <ArrowLeft className="w-5 h-5" />
           </Button>
           <div className="flex-1">
-            <h1 className="text-lg font-semibold text-foreground">VTU Calculator</h1>
+            <h1 className="text-lg font-semibold text-foreground text-glow">VTU Calculator</h1>
             <p className="text-sm text-muted-foreground">CGPA & SGPA</p>
           </div>
         </div>
       </header>
 
       {/* Main Content */}
-      <main className="container px-4 py-8 max-w-2xl mx-auto">
-        <Card className="border-0 shadow-card mb-6 overflow-hidden">
-          <div className="bg-gradient-to-r from-primary/10 to-accent/20 p-6">
+      <main className="container px-4 py-8 max-w-2xl mx-auto relative z-10">
+        <Card className="border-0 mb-6 overflow-hidden glow-border">
+          <div className="gradient-primary p-6">
             <div className="flex items-center gap-4">
-              <div className="w-14 h-14 rounded-2xl bg-primary/20 flex items-center justify-center">
-                <GraduationCap className="w-7 h-7 text-primary" />
+              <div className="w-14 h-14 rounded-2xl bg-primary-foreground/20 flex items-center justify-center backdrop-blur-sm">
+                <GraduationCap className="w-7 h-7 text-primary-foreground" />
               </div>
               <div>
-                <h2 className="text-xl font-semibold text-foreground">VTU Grade Calculator</h2>
-                <p className="text-muted-foreground text-sm">Calculate your SGPA and CGPA as per VTU grading system</p>
+                <h2 className="text-xl font-semibold text-primary-foreground">VTU Grade Calculator</h2>
+                <p className="text-primary-foreground/80 text-sm">Calculate your SGPA and CGPA as per VTU grading system</p>
               </div>
             </div>
           </div>
         </Card>
 
         <Tabs defaultValue="sgpa" className="w-full">
-          <TabsList className="grid w-full grid-cols-2 h-12 p-1 bg-secondary/50 rounded-xl mb-6">
+          <TabsList className="grid w-full grid-cols-2 h-12 p-1 glass rounded-xl mb-6 border border-border/50">
             <TabsTrigger 
               value="sgpa" 
-              className="rounded-lg data-[state=active]:bg-card data-[state=active]:shadow-sm"
+              className="rounded-lg data-[state=active]:bg-primary data-[state=active]:text-primary-foreground data-[state=active]:shadow-glow-sm transition-all"
             >
               SGPA
             </TabsTrigger>
             <TabsTrigger 
               value="cgpa"
-              className="rounded-lg data-[state=active]:bg-card data-[state=active]:shadow-sm"
+              className="rounded-lg data-[state=active]:bg-primary data-[state=active]:text-primary-foreground data-[state=active]:shadow-glow-sm transition-all"
             >
               CGPA
             </TabsTrigger>
           </TabsList>
 
           <TabsContent value="sgpa">
-            <Card className="border-0 shadow-card">
+            <Card className="border-0 glass glow-border">
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
                   <Calculator className="w-5 h-5 text-primary" />
@@ -186,8 +189,8 @@ export default function CalculatorPage() {
               </CardHeader>
               <CardContent className="space-y-4">
                 {subjects.map((subject, index) => (
-                  <div key={subject.id} className="flex items-center gap-3 p-3 bg-secondary/30 rounded-xl">
-                    <span className="text-sm font-medium text-muted-foreground w-8">
+                  <div key={subject.id} className="flex items-center gap-3 p-3 bg-secondary/30 rounded-xl border border-border/30">
+                    <span className="text-sm font-mono font-medium text-primary w-8">
                       #{index + 1}
                     </span>
                     <div className="flex-1 grid grid-cols-2 gap-3">
@@ -199,7 +202,7 @@ export default function CalculatorPage() {
                           max={6}
                           value={subject.credits}
                           onChange={(e) => updateSubject(subject.id, 'credits', parseInt(e.target.value) || 1)}
-                          className="h-10 rounded-lg"
+                          className="h-10 rounded-lg bg-secondary/50 border-border/50 focus:border-primary/50 focus:shadow-glow-sm transition-all"
                         />
                       </div>
                       <div>
@@ -208,10 +211,10 @@ export default function CalculatorPage() {
                           value={subject.grade}
                           onValueChange={(value) => updateSubject(subject.id, 'grade', value)}
                         >
-                          <SelectTrigger className="h-10 rounded-lg">
+                          <SelectTrigger className="h-10 rounded-lg bg-secondary/50 border-border/50">
                             <SelectValue />
                           </SelectTrigger>
-                          <SelectContent>
+                          <SelectContent className="glass-strong border-border/50">
                             {Object.keys(gradePoints).map((grade) => (
                               <SelectItem key={grade} value={grade}>
                                 {grade} ({gradePoints[grade]} points)
@@ -236,7 +239,7 @@ export default function CalculatorPage() {
                 <Button
                   variant="outline"
                   onClick={addSubject}
-                  className="w-full rounded-xl gap-2"
+                  className="w-full rounded-xl gap-2 border-border/50 hover:border-primary/50 hover:shadow-glow-sm transition-all"
                 >
                   <Plus className="w-4 h-4" />
                   Add Subject
@@ -244,15 +247,15 @@ export default function CalculatorPage() {
 
                 <Button
                   onClick={calculateSGPA}
-                  className="w-full rounded-xl h-12"
+                  className="w-full rounded-xl h-12 gradient-primary shadow-glow hover:shadow-glow transition-all"
                 >
                   Calculate SGPA
                 </Button>
 
                 {sgpaResult !== null && (
-                  <div className="p-6 bg-primary/10 rounded-xl text-center">
+                  <div className="p-6 bg-gradient-to-br from-primary/20 to-accent/20 rounded-xl text-center border border-primary/30 shadow-glow-sm">
                     <p className="text-sm text-muted-foreground mb-1">Your SGPA</p>
-                    <p className="text-4xl font-bold text-primary">{sgpaResult}</p>
+                    <p className="text-4xl font-bold text-primary text-glow font-mono">{sgpaResult}</p>
                   </div>
                 )}
               </CardContent>
@@ -260,7 +263,7 @@ export default function CalculatorPage() {
           </TabsContent>
 
           <TabsContent value="cgpa">
-            <Card className="border-0 shadow-card">
+            <Card className="border-0 glass glow-border">
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
                   <Calculator className="w-5 h-5 text-primary" />
@@ -272,8 +275,8 @@ export default function CalculatorPage() {
               </CardHeader>
               <CardContent className="space-y-4">
                 {semesters.map((semester, index) => (
-                  <div key={semester.id} className="flex items-center gap-3 p-3 bg-secondary/30 rounded-xl">
-                    <span className="text-sm font-medium text-muted-foreground w-16">
+                  <div key={semester.id} className="flex items-center gap-3 p-3 bg-secondary/30 rounded-xl border border-border/30">
+                    <span className="text-sm font-mono font-medium text-primary w-16">
                       Sem {index + 1}
                     </span>
                     <div className="flex-1 grid grid-cols-2 gap-3">
@@ -286,7 +289,7 @@ export default function CalculatorPage() {
                           max={10}
                           value={semester.sgpa}
                           onChange={(e) => updateSemester(semester.id, 'sgpa', parseFloat(e.target.value) || 0)}
-                          className="h-10 rounded-lg"
+                          className="h-10 rounded-lg bg-secondary/50 border-border/50 focus:border-primary/50 focus:shadow-glow-sm transition-all"
                         />
                       </div>
                       <div>
@@ -296,7 +299,7 @@ export default function CalculatorPage() {
                           min={1}
                           value={semester.credits}
                           onChange={(e) => updateSemester(semester.id, 'credits', parseInt(e.target.value) || 1)}
-                          className="h-10 rounded-lg"
+                          className="h-10 rounded-lg bg-secondary/50 border-border/50 focus:border-primary/50 focus:shadow-glow-sm transition-all"
                         />
                       </div>
                     </div>
@@ -315,7 +318,7 @@ export default function CalculatorPage() {
                 <Button
                   variant="outline"
                   onClick={addSemester}
-                  className="w-full rounded-xl gap-2"
+                  className="w-full rounded-xl gap-2 border-border/50 hover:border-primary/50 hover:shadow-glow-sm transition-all"
                 >
                   <Plus className="w-4 h-4" />
                   Add Semester
@@ -323,15 +326,15 @@ export default function CalculatorPage() {
 
                 <Button
                   onClick={calculateCGPA}
-                  className="w-full rounded-xl h-12"
+                  className="w-full rounded-xl h-12 gradient-primary shadow-glow hover:shadow-glow transition-all"
                 >
                   Calculate CGPA
                 </Button>
 
                 {cgpaResult !== null && (
-                  <div className="p-6 bg-primary/10 rounded-xl text-center">
+                  <div className="p-6 bg-gradient-to-br from-primary/20 to-accent/20 rounded-xl text-center border border-primary/30 shadow-glow-sm">
                     <p className="text-sm text-muted-foreground mb-1">Your CGPA</p>
-                    <p className="text-4xl font-bold text-primary">{cgpaResult}</p>
+                    <p className="text-4xl font-bold text-primary text-glow font-mono">{cgpaResult}</p>
                   </div>
                 )}
               </CardContent>
@@ -340,16 +343,16 @@ export default function CalculatorPage() {
         </Tabs>
 
         {/* Grade Reference */}
-        <Card className="border-0 shadow-card mt-6">
+        <Card className="border-0 glass mt-6">
           <CardHeader>
             <CardTitle className="text-sm">VTU Grade Points Reference</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="grid grid-cols-4 gap-2 text-sm">
               {Object.entries(gradePoints).map(([grade, points]) => (
-                <div key={grade} className="p-2 bg-secondary/30 rounded-lg text-center">
-                  <span className="font-semibold">{grade}</span>
-                  <span className="text-muted-foreground"> = {points}</span>
+                <div key={grade} className="p-2 bg-secondary/30 rounded-lg text-center border border-border/30">
+                  <span className="font-semibold text-primary">{grade}</span>
+                  <span className="text-muted-foreground font-mono"> = {points}</span>
                 </div>
               ))}
             </div>

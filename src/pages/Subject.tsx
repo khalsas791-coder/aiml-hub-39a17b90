@@ -16,6 +16,7 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from '@/components/ui/alert-dialog';
+import NetworkBackground from '@/components/NetworkBackground';
 import { 
   ArrowLeft, 
   Download, 
@@ -169,9 +170,9 @@ export default function Subject() {
   const ResourceList = ({ resources, emptyMessage }: { resources: Resource[]; emptyMessage: string }) => (
     <>
       {resources.length === 0 ? (
-        <Card className="border-0 shadow-card bg-secondary/30">
+        <Card className="border-0 glass">
           <CardContent className="p-8 flex flex-col items-center justify-center text-center min-h-[200px]">
-            <div className="w-14 h-14 bg-muted rounded-2xl flex items-center justify-center mb-4">
+            <div className="w-14 h-14 bg-secondary rounded-2xl flex items-center justify-center mb-4 animate-pulse-glow">
               <FolderOpen className="w-7 h-7 text-muted-foreground" />
             </div>
             <h3 className="text-base font-semibold text-foreground mb-1">No Files Yet</h3>
@@ -183,21 +184,21 @@ export default function Subject() {
           {resources.map((resource, index) => (
             <Card 
               key={resource.id} 
-              className="border-0 shadow-card animate-slide-up"
+              className="border-0 glass glow-border animate-slide-up hover:shadow-glow-sm transition-all"
               style={{ animationDelay: `${index * 50}ms` }}
             >
               <CardContent className="p-4">
                 <div className="flex items-start gap-4">
-                  <div className="w-12 h-12 bg-accent rounded-xl flex items-center justify-center flex-shrink-0">
-                    <FileText className="w-6 h-6 text-accent-foreground" />
+                  <div className="w-12 h-12 bg-gradient-to-br from-primary/20 to-accent/20 rounded-xl flex items-center justify-center flex-shrink-0">
+                    <FileText className="w-6 h-6 text-primary" />
                   </div>
                   <div className="flex-1 min-w-0">
                     <h3 className="font-semibold text-foreground line-clamp-2">{resource.title}</h3>
                     <div className="flex items-center gap-2 mt-1">
-                      <span className="text-sm text-muted-foreground">
+                      <span className="text-sm text-muted-foreground font-mono">
                         {formatFileSize(resource.file_size)}
                       </span>
-                      <span className="text-muted-foreground">•</span>
+                      <span className="text-primary">•</span>
                       <span className="text-sm text-muted-foreground">
                         {new Date(resource.created_at).toLocaleDateString()}
                       </span>
@@ -210,7 +211,7 @@ export default function Subject() {
                     variant="outline" 
                     size="sm"
                     onClick={() => handleView(resource)}
-                    className="flex-1 gap-2 rounded-xl"
+                    className="flex-1 gap-2 rounded-xl border-border/50 hover:border-primary/50 hover:shadow-glow-sm transition-all"
                   >
                     <Eye className="w-4 h-4" />
                     View
@@ -219,7 +220,7 @@ export default function Subject() {
                     variant="default" 
                     size="sm"
                     onClick={() => handleDownload(resource)}
-                    className="flex-1 gap-2 rounded-xl"
+                    className="flex-1 gap-2 rounded-xl shadow-glow-sm"
                   >
                     <Download className="w-4 h-4" />
                     Download
@@ -240,7 +241,7 @@ export default function Subject() {
                           )}
                         </Button>
                       </AlertDialogTrigger>
-                      <AlertDialogContent>
+                      <AlertDialogContent className="glass-strong border-border/50">
                         <AlertDialogHeader>
                           <AlertDialogTitle>Delete Resource</AlertDialogTitle>
                           <AlertDialogDescription>
@@ -248,8 +249,8 @@ export default function Subject() {
                           </AlertDialogDescription>
                         </AlertDialogHeader>
                         <AlertDialogFooter>
-                          <AlertDialogCancel>Cancel</AlertDialogCancel>
-                          <AlertDialogAction onClick={() => handleDelete(resource)}>
+                          <AlertDialogCancel className="rounded-xl">Cancel</AlertDialogCancel>
+                          <AlertDialogAction onClick={() => handleDelete(resource)} className="rounded-xl">
                             Delete
                           </AlertDialogAction>
                         </AlertDialogFooter>
@@ -266,49 +267,51 @@ export default function Subject() {
   );
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen relative">
+      <NetworkBackground />
+      
       {/* Header */}
-      <header className="sticky top-0 z-50 bg-background/80 backdrop-blur-xl border-b border-border/50">
+      <header className="sticky top-0 z-50 glass-strong">
         <div className="container flex items-center h-16 px-4 gap-4">
           <Button 
             variant="ghost" 
             size="icon"
             onClick={() => navigate('/dashboard')}
-            className="rounded-full"
+            className="rounded-full hover:shadow-glow-sm transition-all"
           >
             <ArrowLeft className="w-5 h-5" />
           </Button>
           <div className="flex-1">
-            <h1 className="text-lg font-semibold text-foreground line-clamp-1">{subjectName}</h1>
+            <h1 className="text-lg font-semibold text-foreground line-clamp-1 text-glow">{subjectName}</h1>
             <p className="text-sm text-muted-foreground">Semester {semester}</p>
           </div>
         </div>
       </header>
 
       {/* Main Content */}
-      <main className="container px-4 py-6">
+      <main className="container px-4 py-6 relative z-10">
         {loading ? (
           <div className="flex items-center justify-center py-20">
             <Loader2 className="w-8 h-8 animate-spin text-primary" />
           </div>
         ) : (
           <Tabs defaultValue="materials" className="w-full">
-            <TabsList className="grid w-full grid-cols-2 h-12 p-1 bg-secondary/50 rounded-xl mb-6">
+            <TabsList className="grid w-full grid-cols-2 h-12 p-1 glass rounded-xl mb-6 border border-border/50">
               <TabsTrigger 
                 value="materials" 
-                className="rounded-lg data-[state=active]:bg-card data-[state=active]:shadow-sm flex items-center gap-2"
+                className="rounded-lg data-[state=active]:bg-primary data-[state=active]:text-primary-foreground data-[state=active]:shadow-glow-sm flex items-center gap-2 transition-all"
               >
                 <BookOpen className="w-4 h-4" />
                 Materials
-                <span className="text-xs bg-muted px-2 py-0.5 rounded-full">{materials.length}</span>
+                <span className="text-xs bg-secondary/50 px-2 py-0.5 rounded-full">{materials.length}</span>
               </TabsTrigger>
               <TabsTrigger 
                 value="pyq"
-                className="rounded-lg data-[state=active]:bg-card data-[state=active]:shadow-sm flex items-center gap-2"
+                className="rounded-lg data-[state=active]:bg-primary data-[state=active]:text-primary-foreground data-[state=active]:shadow-glow-sm flex items-center gap-2 transition-all"
               >
                 <FileQuestion className="w-4 h-4" />
                 PYQs
-                <span className="text-xs bg-muted px-2 py-0.5 rounded-full">{pyqs.length}</span>
+                <span className="text-xs bg-secondary/50 px-2 py-0.5 rounded-full">{pyqs.length}</span>
               </TabsTrigger>
             </TabsList>
 

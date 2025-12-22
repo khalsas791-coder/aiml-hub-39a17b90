@@ -1,8 +1,9 @@
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
-import { BookOpen, GraduationCap, ArrowRight, FileText, Upload, Users } from 'lucide-react';
+import { BookOpen, GraduationCap, ArrowRight, FileText, Upload, Users, Zap } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import { useEffect } from 'react';
+import NetworkBackground from '@/components/NetworkBackground';
 
 const Index = () => {
   const navigate = useNavigate();
@@ -15,12 +16,14 @@ const Index = () => {
   }, [user, loading, navigate]);
 
   return (
-    <div className="min-h-screen bg-background flex flex-col">
+    <div className="min-h-screen flex flex-col relative">
+      <NetworkBackground />
+      
       {/* Header */}
-      <header className="p-6">
+      <header className="p-6 relative z-10">
         <div className="container flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 gradient-primary rounded-xl flex items-center justify-center">
+            <div className="w-10 h-10 gradient-primary rounded-xl flex items-center justify-center shadow-glow-sm">
               <BookOpen className="w-5 h-5 text-primary-foreground" />
             </div>
             <span className="text-xl font-bold text-foreground">AIML Portal</span>
@@ -28,7 +31,7 @@ const Index = () => {
           <Button 
             variant="outline" 
             onClick={() => navigate('/auth')}
-            className="gap-2"
+            className="gap-2 border-border/50 hover:border-primary/50 hover:shadow-glow-sm transition-all"
           >
             Sign In
             <ArrowRight className="w-4 h-4" />
@@ -37,18 +40,18 @@ const Index = () => {
       </header>
 
       {/* Hero Section */}
-      <main className="flex-1 flex flex-col items-center justify-center px-6 py-12">
+      <main className="flex-1 flex flex-col items-center justify-center px-6 py-12 relative z-10">
         <div className="text-center max-w-2xl mx-auto animate-slide-up">
           {/* Badge */}
-          <div className="inline-flex items-center gap-2 px-4 py-2 bg-accent rounded-full text-accent-foreground text-sm font-medium mb-6">
-            <GraduationCap className="w-4 h-4" />
+          <div className="inline-flex items-center gap-2 px-4 py-2 glass rounded-full text-primary text-sm font-medium mb-6 border border-primary/30 shadow-glow-sm">
+            <Zap className="w-4 h-4" />
             AIML Department Resource Portal
           </div>
 
           {/* Heading */}
           <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-foreground mb-6 leading-tight">
             Your Study Materials,{' '}
-            <span className="bg-gradient-to-r from-primary to-primary/70 bg-clip-text text-transparent">
+            <span className="bg-gradient-to-r from-primary via-cyan-400 to-blue-500 bg-clip-text text-transparent text-glow">
               All in One Place
             </span>
           </h1>
@@ -62,19 +65,18 @@ const Index = () => {
           {/* CTA Buttons */}
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
             <Button 
-              variant="hero" 
-              size="xl"
+              size="lg"
               onClick={() => navigate('/auth')}
-              className="gap-2 w-full sm:w-auto"
+              className="gap-2 w-full sm:w-auto gradient-primary shadow-glow hover:shadow-glow transition-all text-primary-foreground"
             >
               Get Started
               <ArrowRight className="w-5 h-5" />
             </Button>
             <Button 
               variant="outline" 
-              size="xl"
+              size="lg"
               onClick={() => navigate('/auth')}
-              className="gap-2 w-full sm:w-auto"
+              className="gap-2 w-full sm:w-auto border-border/50 hover:border-primary/50 hover:shadow-glow-sm transition-all"
             >
               Admin Login
             </Button>
@@ -102,7 +104,7 @@ const Index = () => {
       </main>
 
       {/* Footer */}
-      <footer className="p-6 text-center">
+      <footer className="p-6 text-center relative z-10">
         <p className="text-sm text-muted-foreground">
           © 2024 AIML Department. All rights reserved.
         </p>
@@ -117,11 +119,11 @@ function FeatureCard({ icon: Icon, title, description }: {
   description: string 
 }) {
   return (
-    <div className="p-6 bg-card rounded-2xl shadow-card border border-border/50 text-center hover:shadow-elevated transition-shadow">
-      <div className="w-12 h-12 gradient-primary rounded-xl flex items-center justify-center mx-auto mb-4">
+    <div className="p-6 glass rounded-2xl border border-border/50 text-center hover:shadow-glow-sm hover:border-primary/30 transition-all group">
+      <div className="w-12 h-12 gradient-primary rounded-xl flex items-center justify-center mx-auto mb-4 shadow-glow-sm group-hover:shadow-glow transition-all">
         <Icon className="w-6 h-6 text-primary-foreground" />
       </div>
-      <h3 className="font-semibold text-foreground mb-2">{title}</h3>
+      <h3 className="font-semibold text-foreground mb-2 group-hover:text-primary transition-colors">{title}</h3>
       <p className="text-sm text-muted-foreground">{description}</p>
     </div>
   );
