@@ -67,11 +67,12 @@ export default function Subject() {
 
   const handleView = async (resource: Resource) => {
     try {
-      const { data } = supabase.storage
+      const { data, error } = await supabase.storage
         .from('resources')
-        .getPublicUrl(resource.file_path);
+        .createSignedUrl(resource.file_path, 3600); // 1 hour expiry
       
-      window.open(data.publicUrl, '_blank');
+      if (error) throw error;
+      window.open(data.signedUrl, '_blank');
     } catch (error) {
       console.error('Error viewing file:', error);
       toast.error('Failed to open file');
