@@ -49,22 +49,32 @@ export default function Dashboard() {
   return (
     <div className="min-h-screen bg-background">
       {/* Header */}
-      <header className="sticky top-0 z-50 bg-background/80 backdrop-blur-lg border-b border-border">
+      <header className="sticky top-0 z-50 bg-background/80 backdrop-blur-xl border-b border-border/50">
         <div className="container flex items-center justify-between h-16 px-4">
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 gradient-primary rounded-xl flex items-center justify-center">
               <BookOpen className="w-5 h-5 text-primary-foreground" />
             </div>
-            <span className="text-lg font-bold text-foreground hidden sm:block">AIML Portal</span>
+            <span className="text-lg font-semibold text-foreground hidden sm:block">AIML Portal</span>
           </div>
 
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2">
+            <Button 
+              variant="outline" 
+              size="sm"
+              onClick={() => navigate('/calculator')}
+              className="gap-2 rounded-full"
+            >
+              <Calculator className="w-4 h-4" />
+              <span className="hidden sm:inline">Calculator</span>
+            </Button>
+
             {role === 'admin' && (
               <Button 
                 variant="outline" 
                 size="sm"
                 onClick={() => navigate('/admin/upload')}
-                className="gap-2"
+                className="gap-2 rounded-full"
               >
                 <Upload className="w-4 h-4" />
                 <span className="hidden sm:inline">Upload</span>
@@ -73,7 +83,7 @@ export default function Dashboard() {
             
             <div className="flex items-center gap-2 px-3 py-1.5 bg-secondary rounded-full">
               <User className="w-4 h-4 text-muted-foreground" />
-              <span className="text-sm font-medium text-foreground">{displayName}</span>
+              <span className="text-sm font-medium text-foreground hidden sm:inline">{displayName}</span>
               {role === 'admin' && (
                 <span className="px-2 py-0.5 text-xs font-semibold bg-primary text-primary-foreground rounded-full">
                   Admin
@@ -85,7 +95,7 @@ export default function Dashboard() {
               variant="ghost" 
               size="icon"
               onClick={handleSignOut}
-              className="text-muted-foreground hover:text-foreground"
+              className="text-muted-foreground hover:text-foreground rounded-full"
             >
               <LogOut className="w-4 h-4" />
             </Button>

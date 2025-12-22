@@ -83,34 +83,18 @@ export default function Auth() {
     setIsLoading(true);
     
     try {
-      // Validate form
+      // Validate form - admin can only sign in, no signup
       adminSchema.parse(adminForm);
       
-      if (isSignUp) {
-        const { error } = await signUp(adminForm.email, adminForm.password);
-        
-        if (error) {
-          if (error.message.includes('already registered')) {
-            toast.error('This email is already registered. Please sign in instead.');
-          } else {
-            toast.error(error.message);
-          }
-          return;
-        }
-        
-        toast.success('Admin account created! Contact system admin to grant admin privileges.');
-        setIsSignUp(false);
-      } else {
-        const { error } = await signIn(adminForm.email, adminForm.password);
-        
-        if (error) {
-          toast.error('Invalid email or password');
-          return;
-        }
-        
-        toast.success('Welcome, Admin!');
-        navigate('/dashboard');
+      const { error } = await signIn(adminForm.email, adminForm.password);
+      
+      if (error) {
+        toast.error('Invalid email or password');
+        return;
       }
+      
+      toast.success('Welcome, Admin!');
+      navigate('/dashboard');
     } catch (err) {
       if (err instanceof z.ZodError) {
         toast.error(err.errors[0].message);
@@ -276,7 +260,7 @@ export default function Auth() {
                         <Loader2 className="w-5 h-5 animate-spin" />
                       ) : (
                         <>
-                          {isSignUp ? 'Create Account' : 'Sign In'}
+                          Sign In
                           <ArrowRight className="w-5 h-5" />
                         </>
                       )}
@@ -288,7 +272,7 @@ export default function Auth() {
           </Tabs>
 
           <p className="text-center text-sm text-muted-foreground mt-6">
-            {isSignUp ? 'Already have an account?' : "Don't have an account?"}{' '}
+            {isSignUp ? 'Already have an account?' : "Don't have an account? (Students only)"}{' '}
             <button
               type="button"
               onClick={() => setIsSignUp(!isSignUp)}

@@ -5,11 +5,13 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { AuthProvider } from "@/contexts/AuthContext";
 import ProtectedRoute from "@/components/ProtectedRoute";
+import ChatBot from "@/components/ChatBot";
 import Index from "./pages/Index";
 import Auth from "./pages/Auth";
 import Dashboard from "./pages/Dashboard";
 import Subject from "./pages/Subject";
 import AdminUpload from "./pages/AdminUpload";
+import Calculator from "./pages/Calculator";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -29,6 +31,7 @@ const App = () => (
               element={
                 <ProtectedRoute>
                   <Dashboard />
+                  <ChatBot />
                 </ProtectedRoute>
               } 
             />
@@ -37,6 +40,7 @@ const App = () => (
               element={
                 <ProtectedRoute>
                   <Subject />
+                  <ChatBot />
                 </ProtectedRoute>
               } 
             />
@@ -45,6 +49,15 @@ const App = () => (
               element={
                 <ProtectedRoute>
                   <AdminUpload />
+                </ProtectedRoute>
+              } 
+            />
+            <Route 
+              path="/calculator" 
+              element={
+                <ProtectedRoute>
+                  <Calculator />
+                  <ChatBot />
                 </ProtectedRoute>
               } 
             />
