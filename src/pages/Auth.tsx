@@ -10,6 +10,7 @@ import { GraduationCap, Shield, BookOpen, ArrowRight, Loader2 } from 'lucide-rea
 import { toast } from 'sonner';
 import { z } from 'zod';
 import NetworkBackground from '@/components/NetworkBackground';
+import { validateName } from '@/lib/profanityFilter';
 
 const studentSchema = z.object({
   usn: z.string().min(6, 'USN must be at least 6 characters').max(20, 'USN must be less than 20 characters'),
@@ -38,6 +39,14 @@ export default function Auth() {
       const email = `${studentForm.usn.toLowerCase()}@student.aiml.edu`;
       
       if (isSignUp) {
+        // Validate name for profanity
+        const nameValidation = validateName(studentForm.name);
+        if (!nameValidation.valid) {
+          toast.error(nameValidation.message);
+          setIsLoading(false);
+          return;
+        }
+        
         const { error } = await signUp(email, studentForm.password, {
           usn: studentForm.usn.toUpperCase(),
           full_name: studentForm.name,
