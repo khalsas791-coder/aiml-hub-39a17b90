@@ -7,6 +7,7 @@ import NotificationBell from '@/components/NotificationBell';
 import ThemeToggle from '@/components/ThemeToggle';
 import ProfileStats from '@/components/ProfileStats';
 import ShareButton from '@/components/ShareButton';
+import LanguageSelector from '@/components/LanguageSelector';
 import { 
   BookOpen, 
   Upload, 
@@ -81,6 +82,7 @@ export default function Dashboard() {
                 <span className="hidden sm:inline">Upload</span>
               </Button>
             )}
+            <LanguageSelector />
             <ThemeToggle />
             <NotificationBell />
             <div className="flex items-center gap-2 px-3 py-1.5 glass rounded-full">
