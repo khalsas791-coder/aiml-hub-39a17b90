@@ -14,6 +14,33 @@ export type Database = {
   }
   public: {
     Tables: {
+      notifications: {
+        Row: {
+          created_at: string
+          id: string
+          message: string
+          read: boolean
+          title: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          message: string
+          read?: boolean
+          title: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          message?: string
+          read?: boolean
+          title?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           created_at: string
@@ -38,6 +65,66 @@ export type Database = {
           updated_at?: string
           user_id?: string
           usn?: string | null
+        }
+        Relationships: []
+      }
+      quiz_attempts: {
+        Row: {
+          attempt_date: string
+          created_at: string
+          id: string
+          score: number
+          subject: string
+          total_questions: number
+          user_id: string
+        }
+        Insert: {
+          attempt_date?: string
+          created_at?: string
+          id?: string
+          score: number
+          subject: string
+          total_questions: number
+          user_id: string
+        }
+        Update: {
+          attempt_date?: string
+          created_at?: string
+          id?: string
+          score?: number
+          subject?: string
+          total_questions?: number
+          user_id?: string
+        }
+        Relationships: []
+      }
+      quiz_questions: {
+        Row: {
+          correct_answer: number
+          created_at: string
+          date_active: string
+          id: string
+          options: Json
+          question: string
+          subject: string
+        }
+        Insert: {
+          correct_answer: number
+          created_at?: string
+          date_active?: string
+          id?: string
+          options: Json
+          question: string
+          subject: string
+        }
+        Update: {
+          correct_answer?: number
+          created_at?: string
+          date_active?: string
+          id?: string
+          options?: Json
+          question?: string
+          subject?: string
         }
         Relationships: []
       }
@@ -83,6 +170,30 @@ export type Database = {
         }
         Relationships: []
       }
+      user_preferences: {
+        Row: {
+          created_at: string
+          id: string
+          theme: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          theme?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          theme?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       user_roles: {
         Row: {
           created_at: string
@@ -100,6 +211,42 @@ export type Database = {
           created_at?: string
           id?: string
           role?: Database["public"]["Enums"]["app_role"]
+          user_id?: string
+        }
+        Relationships: []
+      }
+      user_stats: {
+        Row: {
+          created_at: string
+          id: string
+          last_activity: string | null
+          quizzes_completed: number
+          resources_viewed: number
+          study_streak: number
+          subjects_explored: number
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          last_activity?: string | null
+          quizzes_completed?: number
+          resources_viewed?: number
+          study_streak?: number
+          subjects_explored?: number
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          last_activity?: string | null
+          quizzes_completed?: number
+          resources_viewed?: number
+          study_streak?: number
+          subjects_explored?: number
+          updated_at?: string
           user_id?: string
         }
         Relationships: []
