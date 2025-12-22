@@ -27,6 +27,7 @@ export default function AdminUpload() {
     semester: '',
     subject: '',
     title: '',
+    resourceType: 'material',
     file: null as File | null,
   });
 
@@ -43,7 +44,7 @@ export default function AdminUpload() {
             <p className="text-muted-foreground mb-6">
               You don't have permission to access this page. Only admins can upload resources.
             </p>
-            <Button onClick={() => navigate('/dashboard')}>
+            <Button onClick={() => navigate('/dashboard')} className="rounded-xl">
               Back to Dashboard
             </Button>
           </CardContent>
@@ -55,14 +56,12 @@ export default function AdminUpload() {
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
-      // Check file type
       const allowedTypes = ['application/pdf', 'application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'];
       if (!allowedTypes.includes(file.type)) {
         toast.error('Only PDF and Word documents are allowed');
         return;
       }
       
-      // Check file size (max 50MB)
       if (file.size > 50 * 1024 * 1024) {
         toast.error('File size must be less than 50MB');
         return;
@@ -84,19 +83,17 @@ export default function AdminUpload() {
     setUploadSuccess(false);
 
     try {
-      // Generate unique file path
       const fileExt = form.file.name.split('.').pop();
       const fileName = `${Date.now()}_${form.file.name}`;
-      const filePath = `semester-${form.semester}/${form.subject}/${fileName}`;
+      const folderPrefix = form.resourceType === 'pyq' ? 'pyq' : 'materials';
+      const filePath = `semester-${form.semester}/${form.subject}/${folderPrefix}/${fileName}`;
 
-      // Upload file to storage
       const { error: uploadError } = await supabase.storage
         .from('resources')
         .upload(filePath, form.file);
 
       if (uploadError) throw uploadError;
 
-      // Save metadata to database
       const { error: dbError } = await supabase
         .from('resources')
         .insert({
@@ -107,6 +104,7 @@ export default function AdminUpload() {
           file_name: form.file.name,
           file_size: form.file.size,
           uploaded_by: user?.id,
+          resource_type: form.resourceType,
         });
 
       if (dbError) throw dbError;
@@ -114,15 +112,14 @@ export default function AdminUpload() {
       setUploadSuccess(true);
       toast.success('Resource uploaded successfully!');
       
-      // Reset form
       setForm({
         semester: '',
         subject: '',
         title: '',
+        resourceType: 'material',
         file: null,
       });
       
-      // Reset file input
       const fileInput = document.getElementById('file-upload') as HTMLInputElement;
       if (fileInput) fileInput.value = '';
 
@@ -137,18 +134,19 @@ export default function AdminUpload() {
   return (
     <div className="min-h-screen bg-background">
       {/* Header */}
-      <header className="sticky top-0 z-50 bg-background/80 backdrop-blur-lg border-b border-border">
+      <header className="sticky top-0 z-50 bg-background/80 backdrop-blur-xl border-b border-border/50">
         <div className="container flex items-center h-16 px-4 gap-4">
           <Button 
             variant="ghost" 
             size="icon"
             onClick={() => navigate('/dashboard')}
+            className="rounded-full"
           >
             <ArrowLeft className="w-5 h-5" />
           </Button>
           <div className="flex-1">
-            <h1 className="text-lg font-bold text-foreground">Upload Resources</h1>
-            <p className="text-sm text-muted-foreground">Add study materials</p>
+            <h1 className="text-lg font-semibold text-foreground">Upload Resources</h1>
+            <p className="text-sm text-muted-foreground">Add study materials or PYQs</p>
           </div>
         </div>
       </header>
@@ -160,13 +158,30 @@ export default function AdminUpload() {
             <div className="w-12 h-12 gradient-primary rounded-xl flex items-center justify-center mb-2">
               <Upload className="w-6 h-6 text-primary-foreground" />
             </div>
-            <CardTitle>Upload Study Material</CardTitle>
+            <CardTitle>Upload Resource</CardTitle>
             <CardDescription>
               Add PDF or Word documents for students to access
             </CardDescription>
           </CardHeader>
           <CardContent>
             <form onSubmit={handleSubmit} className="space-y-5">
+              {/* Resource Type */}
+              <div className="space-y-2">
+                <Label htmlFor="resourceType">Resource Type</Label>
+                <Select 
+                  value={form.resourceType} 
+                  onValueChange={(value) => setForm({ ...form, resourceType: value })}
+                >
+                  <SelectTrigger className="h-12 rounded-xl">
+                    <SelectValue placeholder="Select type" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="material">Study Material</SelectItem>
+                    <SelectItem value="pyq">Past Year Question (PYQ)</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+
               {/* Semester Selection */}
               <div className="space-y-2">
                 <Label htmlFor="semester">Semester</Label>
@@ -210,7 +225,7 @@ export default function AdminUpload() {
                 <Input
                   id="title"
                   type="text"
-                  placeholder="e.g., Module 1 - Introduction"
+                  placeholder={form.resourceType === 'pyq' ? 'e.g., VTU Dec 2023' : 'e.g., Module 1 - Introduction'}
                   value={form.title}
                   onChange={(e) => setForm({ ...form, title: e.target.value })}
                   className="h-12 rounded-xl"
