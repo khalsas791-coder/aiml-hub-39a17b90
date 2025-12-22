@@ -12,6 +12,7 @@ import Dashboard from "./pages/Dashboard";
 import Subject from "./pages/Subject";
 import AdminUpload from "./pages/AdminUpload";
 import Calculator from "./pages/Calculator";
+import Quiz from "./pages/Quiz";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -58,6 +59,14 @@ const App = () => (
                 <ProtectedRoute>
                   <Calculator />
                   <ChatBot />
+                </ProtectedRoute>
+              } 
+            />
+            <Route 
+              path="/quiz/:subjectId" 
+              element={
+                <ProtectedRoute>
+                  <Quiz />
                 </ProtectedRoute>
               } 
             />
