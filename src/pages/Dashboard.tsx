@@ -2,6 +2,7 @@ import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
+import NetworkBackground from '@/components/NetworkBackground';
 import { 
   BookOpen, 
   Upload, 
@@ -14,16 +15,17 @@ import {
   Coffee,
   Monitor,
   FolderOpen,
-  User
+  User,
+  Sparkles
 } from 'lucide-react';
 import { toast } from 'sonner';
 
 const subjects3rdSem = [
-  { id: 'mathematics', name: 'Mathematics', icon: Calculator, color: 'bg-blue-500/10 text-blue-600' },
-  { id: 'ddco', name: 'DDCO', icon: Cpu, color: 'bg-purple-500/10 text-purple-600' },
-  { id: 'dsa', name: 'DSA', icon: Code2, color: 'bg-green-500/10 text-green-600' },
-  { id: 'java', name: 'Java', icon: Coffee, color: 'bg-orange-500/10 text-orange-600' },
-  { id: 'os', name: 'Operating Systems', icon: Monitor, color: 'bg-red-500/10 text-red-600' },
+  { id: 'mathematics', name: 'Mathematics', icon: Calculator, color: 'from-cyan-500/20 to-blue-500/20 text-cyan-400' },
+  { id: 'ddco', name: 'DDCO', icon: Cpu, color: 'from-purple-500/20 to-pink-500/20 text-purple-400' },
+  { id: 'dsa', name: 'DSA', icon: Code2, color: 'from-emerald-500/20 to-teal-500/20 text-emerald-400' },
+  { id: 'java', name: 'Java', icon: Coffee, color: 'from-orange-500/20 to-amber-500/20 text-orange-400' },
+  { id: 'os', name: 'Operating Systems', icon: Monitor, color: 'from-rose-500/20 to-red-500/20 text-rose-400' },
 ];
 
 export default function Dashboard() {
@@ -40,19 +42,20 @@ export default function Dashboard() {
     navigate(`/semester/${semester}/subject/${subjectId}`);
   };
 
-  // Get display name
   const displayName = user?.user_metadata?.full_name || 
                       user?.user_metadata?.usn || 
                       user?.email?.split('@')[0] || 
                       'User';
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen relative">
+      <NetworkBackground />
+      
       {/* Header */}
-      <header className="sticky top-0 z-50 bg-background/80 backdrop-blur-xl border-b border-border/50">
+      <header className="sticky top-0 z-50 glass-strong">
         <div className="container flex items-center justify-between h-16 px-4">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 gradient-primary rounded-xl flex items-center justify-center">
+            <div className="w-10 h-10 gradient-primary rounded-xl flex items-center justify-center shadow-glow-sm">
               <BookOpen className="w-5 h-5 text-primary-foreground" />
             </div>
             <span className="text-lg font-semibold text-foreground hidden sm:block">AIML Portal</span>
@@ -63,7 +66,7 @@ export default function Dashboard() {
               variant="outline" 
               size="sm"
               onClick={() => navigate('/calculator')}
-              className="gap-2 rounded-full"
+              className="gap-2 rounded-full border-border/50 hover:border-primary/50 hover:shadow-glow-sm transition-all"
             >
               <Calculator className="w-4 h-4" />
               <span className="hidden sm:inline">Calculator</span>
@@ -74,18 +77,18 @@ export default function Dashboard() {
                 variant="outline" 
                 size="sm"
                 onClick={() => navigate('/admin/upload')}
-                className="gap-2 rounded-full"
+                className="gap-2 rounded-full border-border/50 hover:border-primary/50 hover:shadow-glow-sm transition-all"
               >
                 <Upload className="w-4 h-4" />
                 <span className="hidden sm:inline">Upload</span>
               </Button>
             )}
             
-            <div className="flex items-center gap-2 px-3 py-1.5 bg-secondary rounded-full">
-              <User className="w-4 h-4 text-muted-foreground" />
+            <div className="flex items-center gap-2 px-3 py-1.5 glass rounded-full">
+              <User className="w-4 h-4 text-primary" />
               <span className="text-sm font-medium text-foreground hidden sm:inline">{displayName}</span>
               {role === 'admin' && (
-                <span className="px-2 py-0.5 text-xs font-semibold bg-primary text-primary-foreground rounded-full">
+                <span className="px-2 py-0.5 text-xs font-semibold gradient-primary text-primary-foreground rounded-full">
                   Admin
                 </span>
               )}
@@ -95,7 +98,7 @@ export default function Dashboard() {
               variant="ghost" 
               size="icon"
               onClick={handleSignOut}
-              className="text-muted-foreground hover:text-foreground rounded-full"
+              className="text-muted-foreground hover:text-primary rounded-full hover:shadow-glow-sm transition-all"
             >
               <LogOut className="w-4 h-4" />
             </Button>
@@ -104,10 +107,10 @@ export default function Dashboard() {
       </header>
 
       {/* Main Content */}
-      <main className="container px-4 py-8">
+      <main className="container px-4 py-8 relative z-10">
         {/* Welcome Section */}
         <div className="mb-8 animate-fade-in">
-          <h1 className="text-2xl sm:text-3xl font-bold text-foreground mb-2">
+          <h1 className="text-2xl sm:text-3xl font-bold text-foreground mb-2 text-glow">
             Good {new Date().getHours() < 12 ? 'morning' : new Date().getHours() < 17 ? 'afternoon' : 'evening'}, {displayName.split(' ')[0]}!
           </h1>
           <p className="text-muted-foreground">
@@ -116,19 +119,19 @@ export default function Dashboard() {
         </div>
 
         {/* Quick Stats Card */}
-        <Card className="mb-8 border-0 shadow-card gradient-primary overflow-hidden animate-slide-up">
-          <CardContent className="p-6">
+        <Card className="mb-8 border-0 overflow-hidden animate-slide-up glow-border">
+          <div className="gradient-primary p-6">
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-primary-foreground/80 text-sm font-medium mb-1">Your Resources</p>
                 <p className="text-3xl font-bold text-primary-foreground">AIML Department</p>
                 <p className="text-primary-foreground/80 text-sm mt-1">2 Semesters Available</p>
               </div>
-              <div className="w-16 h-16 bg-primary-foreground/20 rounded-2xl flex items-center justify-center">
+              <div className="w-16 h-16 bg-primary-foreground/20 rounded-2xl flex items-center justify-center backdrop-blur-sm">
                 <GraduationCap className="w-8 h-8 text-primary-foreground" />
               </div>
             </div>
-          </CardContent>
+          </div>
         </Card>
 
         {/* Semesters Grid */}
@@ -136,26 +139,29 @@ export default function Dashboard() {
           {/* 3rd Semester */}
           <div className="animate-slide-up" style={{ animationDelay: '100ms' }}>
             <div className="flex items-center justify-between mb-4">
-              <h2 className="text-xl font-bold text-foreground">3rd Semester</h2>
+              <h2 className="text-xl font-bold text-foreground flex items-center gap-2">
+                <Sparkles className="w-5 h-5 text-primary" />
+                3rd Semester
+              </h2>
               <span className="text-sm text-muted-foreground">{subjects3rdSem.length} Subjects</span>
             </div>
-            <Card className="border-0 shadow-card">
+            <Card className="border-0 glass glow-border">
               <CardContent className="p-2">
                 {subjects3rdSem.map((subject, index) => (
                   <button
                     key={subject.id}
                     onClick={() => handleSubjectClick(3, subject.id)}
-                    className="w-full flex items-center gap-4 p-4 rounded-xl hover:bg-secondary/50 transition-colors group"
+                    className="w-full flex items-center gap-4 p-4 rounded-xl hover:bg-secondary/50 transition-all group hover:shadow-glow-sm"
                     style={{ animationDelay: `${(index + 1) * 50}ms` }}
                   >
-                    <div className={`w-12 h-12 rounded-xl flex items-center justify-center ${subject.color}`}>
+                    <div className={`w-12 h-12 rounded-xl flex items-center justify-center bg-gradient-to-br ${subject.color}`}>
                       <subject.icon className="w-6 h-6" />
                     </div>
                     <div className="flex-1 text-left">
-                      <p className="font-semibold text-foreground">{subject.name}</p>
+                      <p className="font-semibold text-foreground group-hover:text-primary transition-colors">{subject.name}</p>
                       <p className="text-sm text-muted-foreground">View materials</p>
                     </div>
-                    <ChevronRight className="w-5 h-5 text-muted-foreground group-hover:text-foreground group-hover:translate-x-1 transition-all" />
+                    <ChevronRight className="w-5 h-5 text-muted-foreground group-hover:text-primary group-hover:translate-x-1 transition-all" />
                   </button>
                 ))}
               </CardContent>
@@ -166,13 +172,13 @@ export default function Dashboard() {
           <div className="animate-slide-up" style={{ animationDelay: '200ms' }}>
             <div className="flex items-center justify-between mb-4">
               <h2 className="text-xl font-bold text-foreground">4th Semester</h2>
-              <span className="px-2 py-1 text-xs font-medium bg-accent text-accent-foreground rounded-full">
+              <span className="px-2 py-1 text-xs font-medium bg-accent text-accent-foreground rounded-full border border-primary/30">
                 Coming Soon
               </span>
             </div>
-            <Card className="border-0 shadow-card bg-secondary/30">
+            <Card className="border-0 glass">
               <CardContent className="p-8 flex flex-col items-center justify-center text-center min-h-[300px]">
-                <div className="w-16 h-16 bg-muted rounded-2xl flex items-center justify-center mb-4">
+                <div className="w-16 h-16 bg-secondary rounded-2xl flex items-center justify-center mb-4 animate-pulse-glow">
                   <FolderOpen className="w-8 h-8 text-muted-foreground" />
                 </div>
                 <h3 className="text-lg font-semibold text-foreground mb-2">No Subjects Yet</h3>
