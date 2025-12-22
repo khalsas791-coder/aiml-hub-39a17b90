@@ -1,8 +1,20 @@
 import { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
+import { useAuth } from '@/contexts/AuthContext';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from '@/components/ui/alert-dialog';
 import { 
   ArrowLeft, 
   Download, 
@@ -10,7 +22,8 @@ import {
   FileText,
   Loader2,
   FolderOpen,
-  BookOpen
+  BookOpen,
+  Trash2
 } from 'lucide-react';
 import { toast } from 'sonner';
 
@@ -34,8 +47,12 @@ const subjectNames: Record<string, string> = {
 export default function Subject() {
   const { semester, subjectId } = useParams<{ semester: string; subjectId: string }>();
   const navigate = useNavigate();
+  const { role } = useAuth();
   const [resources, setResources] = useState<Resource[]>([]);
   const [loading, setLoading] = useState(true);
+  const [deleting, setDeleting] = useState<string | null>(null);
+
+  const isAdmin = role === 'admin';
 
   const subjectName = subjectId ? subjectNames[subjectId] || subjectId : 'Subject';
 
@@ -101,6 +118,34 @@ export default function Subject() {
     } catch (error) {
       console.error('Error downloading file:', error);
       toast.error('Failed to download file');
+    }
+  };
+
+  const handleDelete = async (resource: Resource) => {
+    setDeleting(resource.id);
+    try {
+      // Delete from storage
+      const { error: storageError } = await supabase.storage
+        .from('resources')
+        .remove([resource.file_path]);
+
+      if (storageError) throw storageError;
+
+      // Delete from database
+      const { error: dbError } = await supabase
+        .from('resources')
+        .delete()
+        .eq('id', resource.id);
+
+      if (dbError) throw dbError;
+
+      setResources(resources.filter(r => r.id !== resource.id));
+      toast.success('Resource deleted successfully');
+    } catch (error) {
+      console.error('Error deleting resource:', error);
+      toast.error('Failed to delete resource');
+    } finally {
+      setDeleting(null);
     }
   };
 
@@ -209,6 +254,38 @@ export default function Subject() {
                       <Download className="w-4 h-4" />
                       Download
                     </Button>
+                    {isAdmin && (
+                      <AlertDialog>
+                        <AlertDialogTrigger asChild>
+                          <Button 
+                            variant="destructive" 
+                            size="sm"
+                            className="gap-2"
+                            disabled={deleting === resource.id}
+                          >
+                            {deleting === resource.id ? (
+                              <Loader2 className="w-4 h-4 animate-spin" />
+                            ) : (
+                              <Trash2 className="w-4 h-4" />
+                            )}
+                          </Button>
+                        </AlertDialogTrigger>
+                        <AlertDialogContent>
+                          <AlertDialogHeader>
+                            <AlertDialogTitle>Delete Resource</AlertDialogTitle>
+                            <AlertDialogDescription>
+                              Are you sure you want to delete "{resource.title}"? This action cannot be undone.
+                            </AlertDialogDescription>
+                          </AlertDialogHeader>
+                          <AlertDialogFooter>
+                            <AlertDialogCancel>Cancel</AlertDialogCancel>
+                            <AlertDialogAction onClick={() => handleDelete(resource)}>
+                              Delete
+                            </AlertDialogAction>
+                          </AlertDialogFooter>
+                        </AlertDialogContent>
+                      </AlertDialog>
+                    )}
                   </div>
                 </CardContent>
               </Card>
