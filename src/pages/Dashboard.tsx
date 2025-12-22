@@ -60,7 +60,7 @@ export default function Dashboard() {
     <div className="min-h-screen relative">
       <NetworkBackground />
       
-      <header className="sticky top-0 z-50 glass-strong">
+      <header className="sticky top-0 z-50 bg-card/80 backdrop-blur-lg border-b border-border dark:glass-strong dark:border-0">
         <div className="container flex items-center justify-between h-16 px-4">
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 gradient-primary rounded-xl flex items-center justify-center shadow-glow-sm">
@@ -105,7 +105,7 @@ export default function Dashboard() {
 
         <ProfileStats />
 
-        <Card className="mb-8 border-0 overflow-hidden animate-slide-up glow-border">
+        <Card className="mb-8 border overflow-hidden animate-slide-up shadow-lg dark:border-0 dark:glow-border">
           <div className="gradient-primary p-6">
             <div className="flex items-center justify-between">
               <div>
@@ -128,7 +128,7 @@ export default function Dashboard() {
               </h2>
               <span className="text-sm text-muted-foreground">{subjects3rdSem.length} Subjects</span>
             </div>
-            <Card className="border-0 glass glow-border">
+            <Card className="border shadow-md dark:border-0 dark:glass dark:glow-border">
               <CardContent className="p-2">
                 {subjects3rdSem.map((subject, index) => (
                   <div key={subject.id} className="flex items-center gap-4 p-4 rounded-xl hover:bg-secondary/50 transition-all group" style={{ animationDelay: `${(index + 1) * 50}ms` }}>
@@ -156,7 +156,7 @@ export default function Dashboard() {
               <h2 className="text-xl font-bold text-foreground">4th Semester</h2>
               <span className="px-2 py-1 text-xs font-medium bg-accent text-accent-foreground rounded-full border border-primary/30">Coming Soon</span>
             </div>
-            <Card className="border-0 glass">
+            <Card className="border shadow-md dark:border-0 dark:glass">
               <CardContent className="p-8 flex flex-col items-center justify-center text-center min-h-[300px]">
                 <div className="w-16 h-16 bg-secondary rounded-2xl flex items-center justify-center mb-4 animate-pulse-glow">
                   <FolderOpen className="w-8 h-8 text-muted-foreground" />

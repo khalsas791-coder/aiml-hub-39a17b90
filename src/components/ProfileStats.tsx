@@ -55,28 +55,32 @@ export default function ProfileStats() {
       label: 'Resources Viewed', 
       value: stats.resources_viewed, 
       icon: BookOpen, 
-      color: 'bg-blue-500/20 text-blue-400',
+      bgClass: 'bg-[hsl(var(--stat-blue-bg))]',
+      iconClass: 'text-[hsl(var(--stat-blue-icon))]',
       change: '+2 this week'
     },
     { 
       label: 'Quizzes Completed', 
       value: stats.quizzes_completed, 
       icon: Brain, 
-      color: 'bg-emerald-500/20 text-emerald-400',
+      bgClass: 'bg-[hsl(var(--stat-green-bg))]',
+      iconClass: 'text-[hsl(var(--stat-green-icon))]',
       change: '+3 this month'
     },
     { 
       label: 'Subjects Explored', 
       value: stats.subjects_explored, 
       icon: Target, 
-      color: 'bg-purple-500/20 text-purple-400',
+      bgClass: 'bg-[hsl(var(--stat-purple-bg))]',
+      iconClass: 'text-[hsl(var(--stat-purple-icon))]',
       change: '+1 this week'
     },
     { 
       label: 'Study Streak', 
       value: `${stats.study_streak} days`, 
       icon: TrendingUp, 
-      color: 'bg-amber-500/20 text-amber-400',
+      bgClass: 'bg-[hsl(var(--stat-orange-bg))]',
+      iconClass: 'text-[hsl(var(--stat-orange-icon))]',
       change: 'Keep it up!'
     }
   ];
@@ -98,7 +102,7 @@ export default function ProfileStats() {
       {statCards.map((stat, index) => (
         <Card 
           key={stat.label}
-          className="p-4 glass border-0 hover:shadow-glow-sm transition-all animate-slide-up"
+          className="p-4 border shadow-md hover:shadow-lg dark:glass dark:border-0 dark:hover:shadow-glow-sm transition-all animate-slide-up"
           style={{ animationDelay: `${index * 50}ms` }}
         >
           <div className="flex items-start justify-between">
@@ -113,8 +117,8 @@ export default function ProfileStats() {
                 ↑ {stat.change}
               </p>
             </div>
-            <div className={`w-10 h-10 rounded-xl flex items-center justify-center ${stat.color}`}>
-              <stat.icon className="w-5 h-5" />
+            <div className={`w-10 h-10 rounded-xl flex items-center justify-center ${stat.bgClass}`}>
+              <stat.icon className={`w-5 h-5 ${stat.iconClass}`} />
             </div>
           </div>
         </Card>

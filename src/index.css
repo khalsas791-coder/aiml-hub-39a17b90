@@ -6,6 +6,71 @@
 
 @layer base {
   :root {
+    /* Light mode - Clean white with colorful accents */
+    --background: 0 0% 98%;
+    --foreground: 222 47% 11%;
+
+    --card: 0 0% 100%;
+    --card-foreground: 222 47% 11%;
+
+    --popover: 0 0% 100%;
+    --popover-foreground: 222 47% 11%;
+
+    /* Blue primary for light mode */
+    --primary: 217 91% 60%;
+    --primary-foreground: 0 0% 100%;
+
+    --secondary: 210 40% 96%;
+    --secondary-foreground: 222 47% 11%;
+
+    --muted: 210 40% 96%;
+    --muted-foreground: 215 16% 47%;
+
+    --accent: 210 40% 96%;
+    --accent-foreground: 222 47% 11%;
+
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 100%;
+
+    --border: 214 32% 91%;
+    --input: 214 32% 91%;
+    --ring: 217 91% 60%;
+
+    --radius: 1rem;
+
+    /* Light mode custom design tokens */
+    --gradient-primary: linear-gradient(135deg, hsl(265 89% 60%) 0%, hsl(300 76% 72%) 100%);
+    --gradient-card: linear-gradient(180deg, hsl(0 0% 100%) 0%, hsl(210 40% 98%) 100%);
+    --gradient-hero: linear-gradient(135deg, hsl(265 89% 60%) 0%, hsl(280 80% 65%) 50%, hsl(300 76% 72%) 100%);
+    --gradient-mesh: radial-gradient(ellipse at 50% 50%, hsl(217 91% 60% / 0.05) 0%, transparent 50%);
+    
+    --shadow-sm: 0 1px 2px 0 hsl(0 0% 0% / 0.05);
+    --shadow-md: 0 4px 12px -2px hsl(0 0% 0% / 0.08);
+    --shadow-lg: 0 12px 32px -8px hsl(0 0% 0% / 0.12);
+    --shadow-glow: 0 4px 20px hsl(217 91% 60% / 0.15);
+    --shadow-glow-sm: 0 2px 10px hsl(217 91% 60% / 0.1);
+
+    /* Stat card colors for light mode */
+    --stat-blue-bg: 217 91% 95%;
+    --stat-blue-icon: 217 91% 60%;
+    --stat-green-bg: 142 76% 94%;
+    --stat-green-icon: 142 71% 45%;
+    --stat-purple-bg: 270 76% 94%;
+    --stat-purple-icon: 265 89% 60%;
+    --stat-orange-bg: 32 95% 94%;
+    --stat-orange-icon: 25 95% 53%;
+
+    --sidebar-background: 0 0% 100%;
+    --sidebar-foreground: 222 47% 11%;
+    --sidebar-primary: 217 91% 60%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 210 40% 96%;
+    --sidebar-accent-foreground: 222 47% 11%;
+    --sidebar-border: 214 32% 91%;
+    --sidebar-ring: 217 91% 60%;
+  }
+
+  .dark {
     /* Dark futuristic theme with cyan/blue glow */
     --background: 230 50% 5%;
     --foreground: 200 100% 95%;
@@ -16,7 +81,6 @@
     --popover: 230 50% 8%;
     --popover-foreground: 200 100% 95%;
 
-    /* Cyan primary - glowing network aesthetic */
     --primary: 195 100% 50%;
     --primary-foreground: 230 50% 5%;
 
@@ -36,9 +100,7 @@
     --input: 230 40% 18%;
     --ring: 195 100% 50%;
 
-    --radius: 1rem;
-
-    /* Custom design tokens */
+    /* Dark mode custom design tokens */
     --gradient-primary: linear-gradient(135deg, hsl(195 100% 50%) 0%, hsl(220 100% 60%) 100%);
     --gradient-card: linear-gradient(180deg, hsl(230 50% 10%) 0%, hsl(230 50% 6%) 100%);
     --gradient-hero: linear-gradient(135deg, hsl(195 100% 50%) 0%, hsl(180 100% 40%) 50%, hsl(220 100% 60%) 100%);
@@ -50,44 +112,15 @@
     --shadow-glow: 0 0 30px hsl(195 100% 50% / 0.4);
     --shadow-glow-sm: 0 0 15px hsl(195 100% 50% / 0.3);
 
-    --sidebar-background: 230 50% 6%;
-    --sidebar-foreground: 200 100% 90%;
-    --sidebar-primary: 195 100% 50%;
-    --sidebar-primary-foreground: 230 50% 5%;
-    --sidebar-accent: 195 80% 15%;
-    --sidebar-accent-foreground: 195 100% 70%;
-    --sidebar-border: 230 40% 18%;
-    --sidebar-ring: 195 100% 50%;
-  }
-
-  .dark {
-    --background: 230 50% 5%;
-    --foreground: 200 100% 95%;
-
-    --card: 230 50% 8%;
-    --card-foreground: 200 100% 95%;
-
-    --popover: 230 50% 8%;
-    --popover-foreground: 200 100% 95%;
-
-    --primary: 195 100% 50%;
-    --primary-foreground: 230 50% 5%;
-
-    --secondary: 230 40% 12%;
-    --secondary-foreground: 200 100% 90%;
-
-    --muted: 230 40% 15%;
-    --muted-foreground: 200 30% 60%;
-
-    --accent: 195 80% 15%;
-    --accent-foreground: 195 100% 70%;
-
-    --destructive: 0 72% 51%;
-    --destructive-foreground: 0 0% 100%;
-
-    --border: 230 40% 18%;
-    --input: 230 40% 18%;
-    --ring: 195 100% 50%;
+    /* Stat card colors for dark mode */
+    --stat-blue-bg: 217 91% 50% / 0.2;
+    --stat-blue-icon: 217 91% 70%;
+    --stat-green-bg: 142 76% 50% / 0.2;
+    --stat-green-icon: 142 71% 65%;
+    --stat-purple-bg: 270 76% 50% / 0.2;
+    --stat-purple-icon: 270 76% 70%;
+    --stat-orange-bg: 32 95% 50% / 0.2;
+    --stat-orange-icon: 32 95% 65%;
 
     --sidebar-background: 230 50% 6%;
     --sidebar-foreground: 200 100% 90%;
@@ -112,6 +145,10 @@
 
   body {
     @apply bg-background text-foreground antialiased;
+  }
+
+  .dark body,
+  body:has(.dark) {
     background-image: 
       radial-gradient(ellipse at 20% 80%, hsl(195 100% 50% / 0.08) 0%, transparent 40%),
       radial-gradient(ellipse at 80% 20%, hsl(220 100% 60% / 0.08) 0%, transparent 40%),
@@ -185,14 +222,24 @@
   }
 
   .glass {
-    background: hsl(230 50% 8% / 0.8);
+    background: hsl(var(--card));
     backdrop-filter: blur(20px);
+    border: 1px solid hsl(var(--border));
+  }
+
+  .dark .glass {
+    background: hsl(230 50% 8% / 0.8);
     border: 1px solid hsl(195 100% 50% / 0.1);
   }
 
   .glass-strong {
-    background: hsl(230 50% 10% / 0.9);
+    background: hsl(var(--card));
     backdrop-filter: blur(30px);
+    border: 1px solid hsl(var(--border));
+  }
+
+  .dark .glass-strong {
+    background: hsl(230 50% 10% / 0.9);
     border: 1px solid hsl(195 100% 50% / 0.2);
   }
 }
