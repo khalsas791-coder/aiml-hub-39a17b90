@@ -84,9 +84,6 @@ export default function Dashboard() {
             <ThemeToggle />
             <NotificationBell />
             <UserProfileDropdown />
-            <Button variant="ghost" size="icon" onClick={handleSignOut} className="text-muted-foreground hover:text-primary rounded-full hover:shadow-glow-sm transition-all">
-              <LogOut className="w-4 h-4" />
-            </Button>
           </div>
         </div>
       </header>
