@@ -222,10 +222,10 @@ export default function Auth() {
                     <Input 
                       id="reset-email" 
                       type="email" 
-                      placeholder="Enter your email" 
+                      placeholder="e.g. youremail@gmail.com" 
                       value={forgotPasswordEmail} 
                       onChange={(e) => setForgotPasswordEmail(e.target.value)} 
-                      className="h-12 rounded-xl bg-secondary/50 border-border/50 focus:border-primary/50 focus:shadow-glow-sm transition-all" 
+                      className="h-12 rounded-xl bg-secondary/50 border-border/50 focus:border-primary/50 focus:shadow-glow-sm transition-all relative z-10" 
                     />
                   </div>
                   <Button 
