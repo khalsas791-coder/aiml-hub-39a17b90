@@ -7,7 +7,8 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { GraduationCap, Shield, ArrowRight, Loader2, ArrowLeft, Mail } from 'lucide-react';
+import { Switch } from '@/components/ui/switch';
+import { GraduationCap, Shield, Loader2, ArrowLeft, Mail, Users } from 'lucide-react';
 import { toast } from 'sonner';
 import { z } from 'zod';
 import { validateName } from '@/lib/profanityFilter';
@@ -59,7 +60,8 @@ export default function Auth() {
   const [isSignUp, setIsSignUp] = useState(false);
   const [showForgotPassword, setShowForgotPassword] = useState(false);
   const [forgotPasswordEmail, setForgotPasswordEmail] = useState('');
-  const [studentForm, setStudentForm] = useState({ email: '', password: '', name: '' });
+  const [studentForm, setStudentForm] = useState({ email: '', password: '', name: '', usn: '' });
+  const [isTeacher, setIsTeacher] = useState(false);
   const [adminForm, setAdminForm] = useState({ email: '', password: '' });
   const { signIn, signUp } = useAuth();
   const navigate = useNavigate();
@@ -118,6 +120,7 @@ export default function Auth() {
         
         const { error } = await signUp(studentForm.email, studentForm.password, {
           full_name: studentForm.name,
+          usn: isTeacher ? undefined : studentForm.usn,
         });
         
         if (error) {
@@ -279,73 +282,101 @@ export default function Auth() {
 
       <main className="flex-1 flex items-center justify-center p-6 relative z-10">
         <div className="w-full max-w-md animate-card-entrance">
-          <div className="text-center mb-8">
-            <h1 className="text-3xl font-bold text-foreground mb-2">
-              <span className="bg-gradient-to-r from-sky-500 via-blue-500 to-cyan-500 bg-clip-text text-transparent">
-                {isSignUp ? 'Create Account' : 'Welcome Back'}
-              </span>
+          <div className="text-center mb-6">
+            <h1 className="text-2xl font-bold text-foreground mb-1">
+              {isSignUp ? 'Create Account' : 'Welcome Back'}
             </h1>
-            <p className="text-muted-foreground">
-              {isSignUp ? 'Sign up to access your study materials' : 'Sign in to access your study materials'}
+            <p className="text-muted-foreground text-sm">
+              {isSignUp ? 'Register to get started' : 'Sign in to access your study materials'}
             </p>
           </div>
 
           <Tabs defaultValue="student" className="w-full">
-            <TabsList className="grid w-full grid-cols-2 h-12 p-1 glass rounded-xl mb-6 border border-sky-400/30">
-              <TabsTrigger value="student" className="rounded-lg data-[state=active]:sky-blue-gradient data-[state=active]:text-white data-[state=active]:shadow-glow-sm flex items-center gap-2 transition-all">
+            <TabsList className="grid w-full grid-cols-2 h-11 p-1 bg-secondary/50 rounded-full mb-6 border border-border/30">
+              <TabsTrigger value="student" className="rounded-full data-[state=active]:bg-primary data-[state=active]:text-primary-foreground flex items-center gap-2 transition-all text-sm">
                 <GraduationCap className="w-4 h-4" />
                 Student
               </TabsTrigger>
-              <TabsTrigger value="admin" className="rounded-lg data-[state=active]:sky-blue-gradient data-[state=active]:text-white data-[state=active]:shadow-glow-sm flex items-center gap-2 transition-all">
+              <TabsTrigger value="admin" className="rounded-full data-[state=active]:bg-primary data-[state=active]:text-primary-foreground flex items-center gap-2 transition-all text-sm">
                 <Shield className="w-4 h-4" />
                 Admin
               </TabsTrigger>
             </TabsList>
 
             <TabsContent value="student">
-              <Card className="border-0 glass glow-border relative overflow-hidden">
-                <div className="absolute inset-0 animate-shimmer opacity-30" />
-                <CardHeader className="pb-4 relative z-10">
-                  <CardTitle className="text-lg">Student {isSignUp ? 'Sign Up' : 'Login'}</CardTitle>
-                  <CardDescription>
-                    {isSignUp ? 'Create your account with your email' : 'Use your email to sign in'}
-                  </CardDescription>
-                </CardHeader>
-                <CardContent className="relative z-10">
+              <Card className="border-0 bg-transparent shadow-none">
+                <CardContent className="p-0 space-y-5">
+                  {isSignUp && (
+                    <>
+                      {/* Teacher toggle */}
+                      <div className="flex items-center justify-between p-4 bg-secondary/30 rounded-xl border border-border/30">
+                        <div className="flex items-center gap-3">
+                          <Users className="w-5 h-5 text-muted-foreground" />
+                          <span className="text-sm text-foreground">I am a Teacher</span>
+                        </div>
+                        <Switch 
+                          checked={isTeacher} 
+                          onCheckedChange={setIsTeacher}
+                          className="data-[state=checked]:bg-primary"
+                        />
+                      </div>
+                    </>
+                  )}
+                  
                   <form onSubmit={handleStudentAuth} className="space-y-4">
                     {isSignUp && (
                       <div className="space-y-2">
-                        <Label htmlFor="name">Full Name</Label>
+                        <Label htmlFor="name" className="text-sm font-medium text-foreground">Full Name</Label>
                         <Input 
                           id="name" 
                           type="text" 
                           placeholder="Enter your full name" 
                           value={studentForm.name} 
                           onChange={(e) => setStudentForm({ ...studentForm, name: e.target.value })} 
-                          className="h-12 rounded-xl bg-secondary/50 border-border/50 focus:border-primary/50 focus:shadow-glow-sm transition-all" 
+                          className="h-12 rounded-xl bg-secondary/30 border-border/30 focus:border-primary/50 focus:ring-1 focus:ring-primary/20 transition-all placeholder:text-muted-foreground/50" 
                         />
                       </div>
                     )}
                     <div className="space-y-2">
-                      <Label htmlFor="student-email">Email</Label>
+                      <Label htmlFor="student-email" className="text-sm font-medium text-foreground">
+                        Email Address {isSignUp && <span className="text-destructive">*</span>}
+                      </Label>
                       <Input 
                         id="student-email" 
                         type="email" 
-                        placeholder="youremail@gmail.com" 
+                        placeholder="your.email@example.com" 
                         value={studentForm.email} 
                         onChange={(e) => setStudentForm({ ...studentForm, email: e.target.value })} 
-                        className="h-12 rounded-xl bg-secondary/50 border-border/50 focus:border-primary/50 focus:shadow-glow-sm transition-all" 
+                        className="h-12 rounded-xl bg-secondary/30 border-border/30 focus:border-primary/50 focus:ring-1 focus:ring-primary/20 transition-all placeholder:text-muted-foreground/50" 
                       />
+                      {isSignUp && (
+                        <p className="text-xs text-muted-foreground">Required for password recovery</p>
+                      )}
                     </div>
+                    
+                    {isSignUp && !isTeacher && (
+                      <div className="space-y-2">
+                        <Label htmlFor="usn" className="text-sm font-medium text-foreground">University Seat Number (USN)</Label>
+                        <Input 
+                          id="usn" 
+                          type="text" 
+                          placeholder="E.G., 3GN24CD000" 
+                          value={studentForm.usn} 
+                          onChange={(e) => setStudentForm({ ...studentForm, usn: e.target.value.toUpperCase() })} 
+                          className="h-12 rounded-xl bg-secondary/30 border-border/30 focus:border-primary/50 focus:ring-1 focus:ring-primary/20 transition-all placeholder:text-muted-foreground/50" 
+                        />
+                      </div>
+                    )}
+                    
                     <div className="space-y-2">
-                      <Label htmlFor="student-password">Password</Label>
+                      <Label htmlFor="student-password" className="text-sm font-medium text-foreground">Password</Label>
                       <Input 
                         id="student-password" 
                         type="password" 
                         placeholder="Enter your password" 
                         value={studentForm.password} 
                         onChange={(e) => setStudentForm({ ...studentForm, password: e.target.value })} 
-                        className="h-12 rounded-xl bg-secondary/50 border-border/50 focus:border-primary/50 focus:shadow-glow-sm transition-all" 
+                        className="h-12 rounded-xl bg-secondary/30 border-border/30 focus:border-primary/50 focus:ring-1 focus:ring-primary/20 transition-all placeholder:text-muted-foreground/50" 
                       />
                     </div>
                     {!isSignUp && (
@@ -360,16 +391,13 @@ export default function Auth() {
                     <Button 
                       type="submit" 
                       size="lg" 
-                      className="w-full rounded-xl gradient-primary shadow-glow hover:shadow-glow transition-all" 
+                      className="w-full h-12 rounded-xl bg-primary hover:bg-primary/90 text-primary-foreground font-medium transition-all mt-2" 
                       disabled={isLoading}
                     >
                       {isLoading ? (
                         <Loader2 className="w-5 h-5 animate-spin" />
                       ) : (
-                        <>
-                          {isSignUp ? 'Create Account' : 'Sign In'}
-                          <ArrowRight className="w-5 h-5" />
-                        </>
+                        isSignUp ? 'Create Account' : 'Sign In'
                       )}
                     </Button>
                   </form>
@@ -378,34 +406,29 @@ export default function Auth() {
             </TabsContent>
 
             <TabsContent value="admin">
-              <Card className="border-0 glass glow-border relative overflow-hidden">
-                <div className="absolute inset-0 animate-shimmer opacity-30" />
-                <CardHeader className="pb-4 relative z-10">
-                  <CardTitle className="text-lg">Admin Login</CardTitle>
-                  <CardDescription>Use your admin email and password</CardDescription>
-                </CardHeader>
-                <CardContent className="relative z-10">
+              <Card className="border-0 bg-transparent shadow-none">
+                <CardContent className="p-0">
                   <form onSubmit={handleAdminAuth} className="space-y-4">
                     <div className="space-y-2">
-                      <Label htmlFor="email">Email</Label>
+                      <Label htmlFor="email" className="text-sm font-medium text-foreground">Email Address</Label>
                       <Input 
                         id="email" 
                         type="email" 
                         placeholder="admin@aiml.edu" 
                         value={adminForm.email} 
                         onChange={(e) => setAdminForm({ ...adminForm, email: e.target.value })} 
-                        className="h-12 rounded-xl bg-secondary/50 border-border/50 focus:border-primary/50 focus:shadow-glow-sm transition-all" 
+                        className="h-12 rounded-xl bg-secondary/30 border-border/30 focus:border-primary/50 focus:ring-1 focus:ring-primary/20 transition-all placeholder:text-muted-foreground/50" 
                       />
                     </div>
                     <div className="space-y-2">
-                      <Label htmlFor="admin-password">Password</Label>
+                      <Label htmlFor="admin-password" className="text-sm font-medium text-foreground">Password</Label>
                       <Input 
                         id="admin-password" 
                         type="password" 
                         placeholder="Enter your password" 
                         value={adminForm.password} 
                         onChange={(e) => setAdminForm({ ...adminForm, password: e.target.value })} 
-                        className="h-12 rounded-xl bg-secondary/50 border-border/50 focus:border-primary/50 focus:shadow-glow-sm transition-all" 
+                        className="h-12 rounded-xl bg-secondary/30 border-border/30 focus:border-primary/50 focus:ring-1 focus:ring-primary/20 transition-all placeholder:text-muted-foreground/50" 
                       />
                     </div>
                     <button 
@@ -418,16 +441,13 @@ export default function Auth() {
                     <Button 
                       type="submit" 
                       size="lg" 
-                      className="w-full rounded-xl gradient-primary shadow-glow hover:shadow-glow transition-all" 
+                      className="w-full h-12 rounded-xl bg-primary hover:bg-primary/90 text-primary-foreground font-medium transition-all" 
                       disabled={isLoading}
                     >
                       {isLoading ? (
                         <Loader2 className="w-5 h-5 animate-spin" />
                       ) : (
-                        <>
-                          Sign In
-                          <ArrowRight className="w-5 h-5" />
-                        </>
+                        'Sign In'
                       )}
                     </Button>
                   </form>
@@ -437,13 +457,13 @@ export default function Auth() {
           </Tabs>
 
           <p className="text-center text-sm text-muted-foreground mt-6">
-            {isSignUp ? 'Already have an account?' : "Don't have an account? (Students only)"}{' '}
+            {isSignUp ? 'Already have an account?' : "Don't have an account?"}{' '}
             <button 
               type="button" 
               onClick={() => setIsSignUp(!isSignUp)} 
               className="text-primary font-semibold hover:underline"
             >
-              {isSignUp ? 'Sign In' : 'Sign Up'}
+              {isSignUp ? 'Sign in' : 'Sign Up'}
             </button>
           </p>
         </div>
