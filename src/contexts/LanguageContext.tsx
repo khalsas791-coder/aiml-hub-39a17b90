@@ -546,11 +546,6 @@ export const translations: Record<Language, Record<string, string>> = {
     'common.error': 'ದೋಷ',
     'common.success': 'ಯಶಸ್ಸು',
   },
-    'common.back': 'ಹಿಂದೆ',
-    'common.loading': 'ಲೋಡ್ ಆಗುತ್ತಿದೆ...',
-    'common.error': 'ದೋಷ',
-    'common.success': 'ಯಶಸ್ಸು',
-  },
   telugu: {
     // Auth
     'auth.createAccount': 'ఖాతా సృష్టించండి',
@@ -685,6 +680,7 @@ export const translations: Record<Language, Record<string, string>> = {
     'common.success': 'విజయం',
   },
 };
+
 interface LanguageContextType {
   language: Language;
   setLanguage: (lang: Language) => Promise<void>;

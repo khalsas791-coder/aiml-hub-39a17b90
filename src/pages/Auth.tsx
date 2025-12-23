@@ -43,7 +43,7 @@ const GlowRing = () => (
 );
 
 const studentSchema = z.object({
-  usn: z.string().min(6, 'USN must be at least 6 characters').max(20, 'USN must be less than 20 characters'),
+  email: z.string().email('Invalid email address'),
   password: z.string().min(6, 'Password must be at least 6 characters'),
 });
 
@@ -59,7 +59,7 @@ export default function Auth() {
   const [isSignUp, setIsSignUp] = useState(false);
   const [showForgotPassword, setShowForgotPassword] = useState(false);
   const [forgotPasswordEmail, setForgotPasswordEmail] = useState('');
-  const [studentForm, setStudentForm] = useState({ usn: '', password: '', name: '', email: '' });
+  const [studentForm, setStudentForm] = useState({ email: '', password: '', name: '' });
   const [adminForm, setAdminForm] = useState({ email: '', password: '' });
   const { signIn, signUp } = useAuth();
   const navigate = useNavigate();
@@ -99,24 +99,9 @@ export default function Auth() {
     setIsLoading(true);
     
     try {
-      studentSchema.parse({ usn: studentForm.usn, password: studentForm.password });
+      studentSchema.parse({ email: studentForm.email, password: studentForm.password });
       
       if (isSignUp) {
-        // For signup, use the provided email
-        if (!studentForm.email) {
-          toast.error('Email is required for signup');
-          setIsLoading(false);
-          return;
-        }
-        
-        try {
-          emailSchema.parse(studentForm.email);
-        } catch {
-          toast.error('Please enter a valid email address');
-          setIsLoading(false);
-          return;
-        }
-        
         // Validate name for profanity
         const nameValidation = validateName(studentForm.name);
         if (!nameValidation.valid) {
@@ -125,8 +110,13 @@ export default function Auth() {
           return;
         }
         
+        if (!studentForm.name.trim()) {
+          toast.error('Full name is required');
+          setIsLoading(false);
+          return;
+        }
+        
         const { error } = await signUp(studentForm.email, studentForm.password, {
-          usn: studentForm.usn.toUpperCase(),
           full_name: studentForm.name,
         });
         
@@ -142,21 +132,11 @@ export default function Auth() {
         toast.success('Account created successfully! You can now sign in.');
         setIsSignUp(false);
       } else {
-        // For login, try USN-based email first, then regular email
-        const usnEmail = `${studentForm.usn.toLowerCase()}@student.aiml.edu`;
-        let { error } = await signIn(usnEmail, studentForm.password);
-        
-        // If USN login fails, try with USN as email directly (for users who signed up with email)
-        if (error) {
-          // Check if USN looks like an email
-          if (studentForm.usn.includes('@')) {
-            const result = await signIn(studentForm.usn, studentForm.password);
-            error = result.error;
-          }
-        }
+        // For login, use email directly
+        const { error } = await signIn(studentForm.email, studentForm.password);
         
         if (error) {
-          toast.error('Invalid USN/Email or password');
+          toast.error('Invalid email or password');
           return;
         }
         toast.success('Welcome back!');
@@ -328,46 +308,33 @@ export default function Auth() {
                 <CardHeader className="pb-4 relative z-10">
                   <CardTitle className="text-lg">Student {isSignUp ? 'Sign Up' : 'Login'}</CardTitle>
                   <CardDescription>
-                    {isSignUp ? 'Create your account with USN and email' : 'Use your USN or email to sign in'}
+                    {isSignUp ? 'Create your account with your email' : 'Use your email to sign in'}
                   </CardDescription>
                 </CardHeader>
                 <CardContent className="relative z-10">
                   <form onSubmit={handleStudentAuth} className="space-y-4">
                     {isSignUp && (
-                      <>
-                        <div className="space-y-2">
-                          <Label htmlFor="name">Full Name</Label>
-                          <Input 
-                            id="name" 
-                            type="text" 
-                            placeholder="Enter your full name" 
-                            value={studentForm.name} 
-                            onChange={(e) => setStudentForm({ ...studentForm, name: e.target.value })} 
-                            className="h-12 rounded-xl bg-secondary/50 border-border/50 focus:border-primary/50 focus:shadow-glow-sm transition-all" 
-                          />
-                        </div>
-                        <div className="space-y-2">
-                          <Label htmlFor="signup-email">Email</Label>
-                          <Input 
-                            id="signup-email" 
-                            type="email" 
-                            placeholder="Enter your email" 
-                            value={studentForm.email} 
-                            onChange={(e) => setStudentForm({ ...studentForm, email: e.target.value })} 
-                            className="h-12 rounded-xl bg-secondary/50 border-border/50 focus:border-primary/50 focus:shadow-glow-sm transition-all" 
-                          />
-                        </div>
-                      </>
+                      <div className="space-y-2">
+                        <Label htmlFor="name">Full Name</Label>
+                        <Input 
+                          id="name" 
+                          type="text" 
+                          placeholder="Enter your full name" 
+                          value={studentForm.name} 
+                          onChange={(e) => setStudentForm({ ...studentForm, name: e.target.value })} 
+                          className="h-12 rounded-xl bg-secondary/50 border-border/50 focus:border-primary/50 focus:shadow-glow-sm transition-all" 
+                        />
+                      </div>
                     )}
                     <div className="space-y-2">
-                      <Label htmlFor="usn">{isSignUp ? 'USN' : 'USN or Email'}</Label>
+                      <Label htmlFor="student-email">Email</Label>
                       <Input 
-                        id="usn" 
-                        type="text" 
-                        placeholder={isSignUp ? 'e.g., 3GN24CI000' : 'USN or email'} 
-                        value={studentForm.usn} 
-                        onChange={(e) => setStudentForm({ ...studentForm, usn: e.target.value })} 
-                        className="h-12 rounded-xl uppercase bg-secondary/50 border-border/50 focus:border-primary/50 focus:shadow-glow-sm transition-all" 
+                        id="student-email" 
+                        type="email" 
+                        placeholder="youremail@gmail.com" 
+                        value={studentForm.email} 
+                        onChange={(e) => setStudentForm({ ...studentForm, email: e.target.value })} 
+                        className="h-12 rounded-xl bg-secondary/50 border-border/50 focus:border-primary/50 focus:shadow-glow-sm transition-all" 
                       />
                     </div>
                     <div className="space-y-2">
