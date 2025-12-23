@@ -69,19 +69,20 @@ export default function Auth() {
   const handleForgotPassword = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
-    
+
     try {
       emailSchema.parse(forgotPasswordEmail);
-      
+
+      const redirectTo = new URL('/reset-password', window.location.origin).toString();
       const { error } = await supabase.auth.resetPasswordForEmail(forgotPasswordEmail, {
-        redirectTo: 'https://aiml-hub.vercel.app/reset-password',
+        redirectTo,
       });
-      
+
       if (error) {
         toast.error(error.message);
         return;
       }
-      
+
       toast.success('Password reset email sent! Check your inbox.');
       setShowForgotPassword(false);
       setForgotPasswordEmail('');
