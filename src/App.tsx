@@ -15,6 +15,7 @@ import Subject from "./pages/Subject";
 import AdminUpload from "./pages/AdminUpload";
 import Calculator from "./pages/Calculator";
 import Quiz from "./pages/Quiz";
+import Timetable from "./pages/Timetable";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -71,6 +72,14 @@ const App = () => (
                 element={
                   <ProtectedRoute>
                     <Quiz />
+                  </ProtectedRoute>
+                } 
+              />
+              <Route 
+                path="/timetable" 
+                element={
+                  <ProtectedRoute>
+                    <Timetable />
                   </ProtectedRoute>
                 } 
               />

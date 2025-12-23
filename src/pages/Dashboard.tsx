@@ -106,6 +106,7 @@ export default function Dashboard() {
             <Button 
               variant="outline" 
               size="sm" 
+              onClick={() => navigate('/timetable')}
               className="gap-1.5 rounded-full border-border hover:border-primary/50 text-foreground"
             >
               <CalendarDays className="w-3.5 h-3.5" />
