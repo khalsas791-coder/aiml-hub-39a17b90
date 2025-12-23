@@ -26,8 +26,7 @@ import {
   FolderOpen,
   BookOpen,
   Trash2,
-  FileQuestion,
-  FlaskConical
+  FileQuestion
 } from 'lucide-react';
 import { toast } from 'sonner';
 
@@ -55,7 +54,6 @@ export default function Subject() {
   const { role } = useAuth();
   const [materials, setMaterials] = useState<Resource[]>([]);
   const [pyqs, setPyqs] = useState<Resource[]>([]);
-  const [labManuals, setLabManuals] = useState<Resource[]>([]);
   const [loading, setLoading] = useState(true);
   const [deleting, setDeleting] = useState<string | null>(null);
 
@@ -83,7 +81,6 @@ export default function Subject() {
       const allResources = data || [];
       setMaterials(allResources.filter(r => r.resource_type === 'material'));
       setPyqs(allResources.filter(r => r.resource_type === 'pyq'));
-      setLabManuals(allResources.filter(r => r.resource_type === 'lab_manual'));
     } catch (error) {
       console.error('Error fetching resources:', error);
       toast.error('Failed to load resources');
@@ -150,8 +147,6 @@ export default function Subject() {
         setMaterials(materials.filter(r => r.id !== resource.id));
       } else if (resource.resource_type === 'pyq') {
         setPyqs(pyqs.filter(r => r.id !== resource.id));
-      } else if (resource.resource_type === 'lab_manual') {
-        setLabManuals(labManuals.filter(r => r.id !== resource.id));
       }
       toast.success('Resource deleted successfully');
     } catch (error) {
@@ -301,7 +296,7 @@ export default function Subject() {
           </div>
         ) : (
           <Tabs defaultValue="materials" className="w-full">
-            <TabsList className="grid w-full grid-cols-3 h-12 p-1 glass rounded-xl mb-6 border border-border/50">
+            <TabsList className="grid w-full grid-cols-2 h-12 p-1 glass rounded-xl mb-6 border border-border/50">
               <TabsTrigger 
                 value="materials" 
                 className="rounded-lg data-[state=active]:bg-primary data-[state=active]:text-primary-foreground data-[state=active]:shadow-glow-sm flex items-center gap-2 transition-all"
@@ -309,14 +304,6 @@ export default function Subject() {
                 <BookOpen className="w-4 h-4" />
                 <span className="hidden sm:inline">Materials</span>
                 <span className="text-xs bg-secondary/50 px-2 py-0.5 rounded-full">{materials.length}</span>
-              </TabsTrigger>
-              <TabsTrigger 
-                value="lab_manual"
-                className="rounded-lg data-[state=active]:bg-primary data-[state=active]:text-primary-foreground data-[state=active]:shadow-glow-sm flex items-center gap-2 transition-all"
-              >
-                <FlaskConical className="w-4 h-4" />
-                <span className="hidden sm:inline">Lab Manual</span>
-                <span className="text-xs bg-secondary/50 px-2 py-0.5 rounded-full">{labManuals.length}</span>
               </TabsTrigger>
               <TabsTrigger 
                 value="pyq"
@@ -332,13 +319,6 @@ export default function Subject() {
               <ResourceList 
                 resources={materials} 
                 emptyMessage="Study materials will appear here once uploaded by admins." 
-              />
-            </TabsContent>
-
-            <TabsContent value="lab_manual">
-              <ResourceList 
-                resources={labManuals} 
-                emptyMessage="Lab manuals will appear here once uploaded by admins." 
               />
             </TabsContent>
 
