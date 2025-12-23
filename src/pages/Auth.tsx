@@ -7,11 +7,40 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { GraduationCap, Shield, BookOpen, ArrowRight, Loader2, ArrowLeft, Mail } from 'lucide-react';
+import { GraduationCap, Shield, ArrowRight, Loader2, ArrowLeft, Mail } from 'lucide-react';
 import { toast } from 'sonner';
 import { z } from 'zod';
-import NetworkBackground from '@/components/NetworkBackground';
 import { validateName } from '@/lib/profanityFilter';
+import aimlLogo from '@/assets/aiml-logo.png';
+
+// Floating bubble component for animation
+const FloatingBubbles = () => (
+  <div className="absolute inset-0 overflow-hidden pointer-events-none">
+    {[...Array(12)].map((_, i) => (
+      <div
+        key={i}
+        className="absolute rounded-full bg-gradient-to-br from-sky-400/20 to-blue-500/20 animate-float-bubble"
+        style={{
+          width: `${Math.random() * 100 + 40}px`,
+          height: `${Math.random() * 100 + 40}px`,
+          left: `${Math.random() * 100}%`,
+          top: `${Math.random() * 100}%`,
+          animationDelay: `${Math.random() * 5}s`,
+          animationDuration: `${6 + Math.random() * 4}s`,
+        }}
+      />
+    ))}
+  </div>
+);
+
+// Rotating glow ring component
+const GlowRing = () => (
+  <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+    <div className="w-[600px] h-[600px] rounded-full border-2 border-sky-400/20 animate-rotate-glow" />
+    <div className="absolute w-[500px] h-[500px] rounded-full border border-blue-400/15 animate-rotate-glow" style={{ animationDirection: 'reverse', animationDuration: '25s' }} />
+    <div className="absolute w-[400px] h-[400px] rounded-full border border-cyan-400/10 animate-rotate-glow" style={{ animationDuration: '30s' }} />
+  </div>
+);
 
 const studentSchema = z.object({
   usn: z.string().min(6, 'USN must be at least 6 characters').max(20, 'USN must be less than 20 characters'),
@@ -172,30 +201,36 @@ export default function Auth() {
 
   if (showForgotPassword) {
     return (
-      <div className="min-h-screen flex flex-col relative">
-        <NetworkBackground />
+      <div className="min-h-screen flex flex-col relative overflow-hidden sky-blue-bg">
+        {/* Animated background elements */}
+        <FloatingBubbles />
+        <GlowRing />
+        
+        {/* Gradient overlay */}
+        <div className="absolute inset-0 bg-gradient-to-br from-sky-500/5 via-transparent to-blue-600/5 animate-gradient-shift" />
         
         <header className="p-6 relative z-10">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 gradient-primary rounded-xl flex items-center justify-center shadow-glow-sm">
-              <BookOpen className="w-5 h-5 text-primary-foreground" />
-            </div>
+            <img src={aimlLogo} alt="AIML Logo" className="w-[80px] h-[80px] object-cover rounded-full shadow-glow-sm" />
             <span className="text-xl font-bold text-foreground">AIML Portal</span>
           </div>
         </header>
 
         <main className="flex-1 flex items-center justify-center p-6 relative z-10">
-          <div className="w-full max-w-md animate-slide-up">
+          <div className="w-full max-w-md animate-card-entrance">
             <div className="text-center mb-8">
-              <h1 className="text-3xl font-bold text-foreground mb-2 text-glow">
-                Forgot Password
+              <h1 className="text-3xl font-bold text-foreground mb-2">
+                <span className="bg-gradient-to-r from-sky-500 via-blue-500 to-cyan-500 bg-clip-text text-transparent">
+                  Forgot Password
+                </span>
               </h1>
               <p className="text-muted-foreground">
                 Enter your email to receive a password reset link
               </p>
             </div>
 
-            <Card className="border-0 glass glow-border">
+            <Card className="border-0 glass glow-border relative overflow-hidden">
+              <div className="absolute inset-0 animate-shimmer opacity-50" />
               <CardHeader className="pb-4">
                 <CardTitle className="text-lg">Reset Password</CardTitle>
                 <CardDescription>We'll send you a recovery link</CardDescription>
@@ -247,23 +282,28 @@ export default function Auth() {
   }
 
   return (
-    <div className="min-h-screen flex flex-col relative">
-      <NetworkBackground />
+    <div className="min-h-screen flex flex-col relative overflow-hidden sky-blue-bg">
+      {/* Animated background elements */}
+      <FloatingBubbles />
+      <GlowRing />
+      
+      {/* Gradient overlay */}
+      <div className="absolute inset-0 bg-gradient-to-br from-sky-500/5 via-transparent to-blue-600/5 animate-gradient-shift" />
       
       <header className="p-6 relative z-10">
         <div className="flex items-center gap-3">
-          <div className="w-10 h-10 gradient-primary rounded-xl flex items-center justify-center shadow-glow-sm">
-            <BookOpen className="w-5 h-5 text-primary-foreground" />
-          </div>
+          <img src={aimlLogo} alt="AIML Logo" className="w-[80px] h-[80px] object-cover rounded-full shadow-glow-sm" />
           <span className="text-xl font-bold text-foreground">AIML Portal</span>
         </div>
       </header>
 
       <main className="flex-1 flex items-center justify-center p-6 relative z-10">
-        <div className="w-full max-w-md animate-slide-up">
+        <div className="w-full max-w-md animate-card-entrance">
           <div className="text-center mb-8">
-            <h1 className="text-3xl font-bold text-foreground mb-2 text-glow">
-              {isSignUp ? 'Create Account' : 'Welcome Back'}
+            <h1 className="text-3xl font-bold text-foreground mb-2">
+              <span className="bg-gradient-to-r from-sky-500 via-blue-500 to-cyan-500 bg-clip-text text-transparent">
+                {isSignUp ? 'Create Account' : 'Welcome Back'}
+              </span>
             </h1>
             <p className="text-muted-foreground">
               {isSignUp ? 'Sign up to access your study materials' : 'Sign in to access your study materials'}
@@ -271,26 +311,27 @@ export default function Auth() {
           </div>
 
           <Tabs defaultValue="student" className="w-full">
-            <TabsList className="grid w-full grid-cols-2 h-12 p-1 glass rounded-xl mb-6 border border-border/50">
-              <TabsTrigger value="student" className="rounded-lg data-[state=active]:bg-primary data-[state=active]:text-primary-foreground data-[state=active]:shadow-glow-sm flex items-center gap-2 transition-all">
+            <TabsList className="grid w-full grid-cols-2 h-12 p-1 glass rounded-xl mb-6 border border-sky-400/30">
+              <TabsTrigger value="student" className="rounded-lg data-[state=active]:sky-blue-gradient data-[state=active]:text-white data-[state=active]:shadow-glow-sm flex items-center gap-2 transition-all">
                 <GraduationCap className="w-4 h-4" />
                 Student
               </TabsTrigger>
-              <TabsTrigger value="admin" className="rounded-lg data-[state=active]:bg-primary data-[state=active]:text-primary-foreground data-[state=active]:shadow-glow-sm flex items-center gap-2 transition-all">
+              <TabsTrigger value="admin" className="rounded-lg data-[state=active]:sky-blue-gradient data-[state=active]:text-white data-[state=active]:shadow-glow-sm flex items-center gap-2 transition-all">
                 <Shield className="w-4 h-4" />
                 Admin
               </TabsTrigger>
             </TabsList>
 
             <TabsContent value="student">
-              <Card className="border-0 glass glow-border">
-                <CardHeader className="pb-4">
+              <Card className="border-0 glass glow-border relative overflow-hidden">
+                <div className="absolute inset-0 animate-shimmer opacity-30" />
+                <CardHeader className="pb-4 relative z-10">
                   <CardTitle className="text-lg">Student {isSignUp ? 'Sign Up' : 'Login'}</CardTitle>
                   <CardDescription>
                     {isSignUp ? 'Create your account with USN and email' : 'Use your USN or email to sign in'}
                   </CardDescription>
                 </CardHeader>
-                <CardContent>
+                <CardContent className="relative z-10">
                   <form onSubmit={handleStudentAuth} className="space-y-4">
                     {isSignUp && (
                       <>
@@ -370,12 +411,13 @@ export default function Auth() {
             </TabsContent>
 
             <TabsContent value="admin">
-              <Card className="border-0 glass glow-border">
-                <CardHeader className="pb-4">
+              <Card className="border-0 glass glow-border relative overflow-hidden">
+                <div className="absolute inset-0 animate-shimmer opacity-30" />
+                <CardHeader className="pb-4 relative z-10">
                   <CardTitle className="text-lg">Admin Login</CardTitle>
                   <CardDescription>Use your admin email and password</CardDescription>
                 </CardHeader>
-                <CardContent>
+                <CardContent className="relative z-10">
                   <form onSubmit={handleAdminAuth} className="space-y-4">
                     <div className="space-y-2">
                       <Label htmlFor="email">Email</Label>
