@@ -205,19 +205,26 @@ export default function UserProfileDropdown() {
               <ChevronRight className="w-4 h-4 text-muted-foreground" />
             </DropdownMenuItem>
 
-            <DropdownMenuItem 
-              className="flex items-center justify-between p-3 cursor-pointer hover:bg-secondary/50 rounded-lg"
-              onClick={() => {
-                setIsOpen(false);
-                toast.info('Help & Support coming soon!');
-              }}
-            >
-              <div className="flex items-center gap-3">
-                <HelpCircle className="w-5 h-5 text-muted-foreground" />
-                <span className="text-foreground">Help & Support</span>
+            {/* Help & Support Section */}
+            <div className="p-3 bg-secondary/30 rounded-lg">
+              <div className="flex items-center gap-3 mb-2">
+                <HelpCircle className="w-5 h-5 text-primary" />
+                <span className="text-foreground font-medium">Help & Support</span>
               </div>
-              <ChevronRight className="w-4 h-4 text-muted-foreground" />
-            </DropdownMenuItem>
+              <div className="flex items-center gap-3 mt-2 pl-1">
+                <div className="w-8 h-8 bg-primary/20 rounded-full flex items-center justify-center flex-shrink-0">
+                  <span className="text-primary font-bold text-xs">JS</span>
+                </div>
+                <div className="flex-1">
+                  <p className="text-sm font-semibold text-foreground">Jaspreet Singh</p>
+                  <p className="text-xs text-muted-foreground">Developer & Support</p>
+                  <p className="text-xs mt-1">
+                    <span className="text-muted-foreground">USN:</span>{' '}
+                    <span className="text-primary font-semibold">3GN24CI047</span>
+                  </p>
+                </div>
+              </div>
+            </div>
 
             <DropdownMenuSeparator className="bg-border" />
 

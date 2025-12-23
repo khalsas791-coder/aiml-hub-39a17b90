@@ -23,8 +23,7 @@ import {
   BookOpen,
   FlaskConical,
   BarChart3,
-  FolderOpen,
-  HelpCircle
+  FolderOpen
 } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { toast } from 'sonner';
@@ -363,43 +362,6 @@ export default function Dashboard() {
           </Card>
         </div>
 
-        {/* Help & Support Section */}
-        <div className="mt-10 animate-slide-up" style={{ animationDelay: '500ms' }}>
-          <Card className="border shadow-lg dark:border-0 dark:glass overflow-hidden">
-            <CardContent className="p-6">
-              <div className="flex items-center gap-2 mb-4">
-                <HelpCircle className="w-5 h-5 text-primary" />
-                <h3 className="text-lg font-bold text-foreground">Help & Support</h3>
-              </div>
-              <p className="text-muted-foreground text-sm mb-6">
-                Need assistance? Contact our support team.
-              </p>
-              
-              <div className="bg-secondary/50 dark:bg-secondary/30 rounded-xl p-4 border border-border/50">
-                <div className="flex items-start gap-4">
-                  <div className="w-12 h-12 bg-primary/20 rounded-full flex items-center justify-center flex-shrink-0">
-                    <span className="text-primary font-bold text-lg">JS</span>
-                  </div>
-                  <div className="flex-1">
-                    <h4 className="font-semibold text-foreground">Jaspreet Singh</h4>
-                    <p className="text-sm text-muted-foreground">Developer & Support</p>
-                    <p className="text-sm mt-2">
-                      <span className="font-medium text-foreground">USN:</span>{' '}
-                      <span className="text-primary font-semibold">3GN24CI047</span>
-                    </p>
-                    <p className="text-sm text-muted-foreground mt-3">
-                      For any help, queries, or issues with the portal, feel free to reach out!
-                    </p>
-                  </div>
-                </div>
-              </div>
-              
-              <p className="text-center text-muted-foreground text-sm mt-4">
-                You can also report bugs or suggest features.
-              </p>
-            </CardContent>
-          </Card>
-        </div>
       </main>
     </div>
   );
