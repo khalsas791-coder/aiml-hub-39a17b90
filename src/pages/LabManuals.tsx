@@ -98,6 +98,13 @@ export default function LabManuals() {
   const [uploadFile, setUploadFile] = useState<File | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
+  // When dialog opens, default to selected subject if viewing one
+  useEffect(() => {
+    if (uploadDialogOpen && selectedSubject) {
+      setUploadSubject(selectedSubject);
+    }
+  }, [uploadDialogOpen, selectedSubject]);
+
   const isAdmin = role === 'admin';
 
   useEffect(() => {
