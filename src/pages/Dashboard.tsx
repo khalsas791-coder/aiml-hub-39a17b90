@@ -58,15 +58,6 @@ const subjects3rdSem: SubjectData[] = [
     iconBg: 'bg-purple-500'
   },
   { 
-    id: 'lab-manuals', 
-    code: 'LAB301',
-    name: 'Lab Manuals', 
-    description: 'Laboratory manuals and practical guides for all subjects',
-    icon: BookOpen, 
-    color: 'text-pink-500',
-    iconBg: 'bg-pink-500'
-  },
-  { 
     id: 'mathematics', 
     code: 'BCS301',
     name: 'Mathematics', 
@@ -289,6 +280,55 @@ export default function Dashboard() {
                 </CardContent>
               </Card>
             ))}
+
+            {/* Lab Manuals Card */}
+            <Card 
+              onClick={() => navigate('/lab-manuals')}
+              className="group cursor-pointer border border-border/50 bg-card/80 backdrop-blur-sm overflow-hidden
+                transition-all duration-300 ease-out
+                hover:shadow-2xl hover:shadow-pink-500/10
+                hover:-translate-y-2 hover:rotate-1
+                active:scale-[0.98]
+                dark:bg-card/40 dark:hover:bg-card/60
+                animate-fade-in"
+              style={{ 
+                animationDelay: `${(subjects3rdSem.length + 1) * 100}ms`,
+                transformStyle: 'preserve-3d',
+                perspective: '1000px'
+              }}
+            >
+              <CardContent className="p-5 relative">
+                {/* Decorative Ring */}
+                <div className="absolute top-4 right-4 w-12 h-12 rounded-full border-2 border-pink-200 dark:border-pink-800/50 opacity-50 group-hover:opacity-100 group-hover:scale-110 transition-all duration-300" />
+                
+                {/* Icon */}
+                <div className="w-12 h-12 bg-pink-500 rounded-xl flex items-center justify-center mb-4 shadow-lg group-hover:scale-110 group-hover:rotate-3 transition-all duration-300">
+                  <BookOpen className="w-6 h-6 text-white" />
+                </div>
+
+                {/* Subject Code */}
+                <p className="text-sm font-medium text-pink-500 mb-1">LAB301</p>
+                
+                {/* Subject Name */}
+                <h3 className="font-bold text-foreground text-lg mb-2 group-hover:text-primary transition-colors line-clamp-1">
+                  Lab Manuals
+                </h3>
+                
+                {/* Description */}
+                <p className="text-sm text-muted-foreground mb-4 line-clamp-2">
+                  Laboratory manuals and practical guides for all subjects
+                </p>
+
+                {/* Footer */}
+                <div className="flex items-center justify-between pt-2 border-t border-border/50">
+                  <div className="flex items-center gap-2 text-muted-foreground">
+                    <FolderOpen className="w-4 h-4" />
+                    <span className="text-sm">{resourceCounts['lab-manuals'] || 0} manuals</span>
+                  </div>
+                  <ChevronRight className="w-5 h-5 text-muted-foreground group-hover:text-primary group-hover:translate-x-1 transition-all" />
+                </div>
+              </CardContent>
+            </Card>
           </div>
         </div>
 
