@@ -71,19 +71,13 @@ export default function Dashboard() {
           </div>
 
           <div className="flex items-center gap-2">
-            <Button variant="outline" size="sm" onClick={() => navigate('/calculator')} className="gap-2 rounded-full border-border/50 hover:border-primary/50 hover:shadow-glow-sm transition-all">
-              <Calculator className="w-4 h-4" />
-              <span className="hidden sm:inline">Calculator</span>
-            </Button>
             {role === 'admin' && (
               <Button variant="outline" size="sm" onClick={() => navigate('/admin/upload')} className="gap-2 rounded-full border-border/50 hover:border-primary/50 hover:shadow-glow-sm transition-all">
                 <Upload className="w-4 h-4" />
                 <span className="hidden sm:inline">Upload</span>
               </Button>
             )}
-            <LanguageSelector />
             <ThemeToggle />
-            <NotificationBell />
             <UserProfileDropdown />
           </div>
         </div>
