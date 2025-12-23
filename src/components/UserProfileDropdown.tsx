@@ -10,6 +10,12 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/ui/dialog';
 import { Switch } from '@/components/ui/switch';
 import { 
   User, 
@@ -19,7 +25,8 @@ import {
   Share2, 
   HelpCircle, 
   LogOut,
-  Loader2
+  Loader2,
+  X
 } from 'lucide-react';
 import { toast } from 'sonner';
 
@@ -40,6 +47,7 @@ export default function UserProfileDropdown() {
   const [loading, setLoading] = useState(true);
   const [notificationsEnabled, setNotificationsEnabled] = useState(true);
   const [isOpen, setIsOpen] = useState(false);
+  const [helpDialogOpen, setHelpDialogOpen] = useState(false);
 
   useEffect(() => {
     if (user) {
@@ -108,6 +116,7 @@ export default function UserProfileDropdown() {
                       'User';
 
   return (
+    <>
     <DropdownMenu open={isOpen} onOpenChange={setIsOpen}>
       <DropdownMenuTrigger asChild>
         <Button variant="ghost" className="flex items-center gap-2 px-3 py-1.5 glass rounded-full hover:shadow-glow-sm transition-all">
@@ -205,26 +214,19 @@ export default function UserProfileDropdown() {
               <ChevronRight className="w-4 h-4 text-muted-foreground" />
             </DropdownMenuItem>
 
-            {/* Help & Support Section */}
-            <div className="p-3 bg-secondary/30 rounded-lg">
-              <div className="flex items-center gap-3 mb-2">
-                <HelpCircle className="w-5 h-5 text-primary" />
-                <span className="text-foreground font-medium">Help & Support</span>
+            <DropdownMenuItem 
+              className="flex items-center justify-between p-3 cursor-pointer hover:bg-secondary/50 rounded-lg"
+              onClick={() => {
+                setIsOpen(false);
+                setHelpDialogOpen(true);
+              }}
+            >
+              <div className="flex items-center gap-3">
+                <HelpCircle className="w-5 h-5 text-muted-foreground" />
+                <span className="text-foreground">Help & Support</span>
               </div>
-              <div className="flex items-center gap-3 mt-2 pl-1">
-                <div className="w-8 h-8 bg-primary/20 rounded-full flex items-center justify-center flex-shrink-0">
-                  <span className="text-primary font-bold text-xs">JS</span>
-                </div>
-                <div className="flex-1">
-                  <p className="text-sm font-semibold text-foreground">Jaspreet Singh</p>
-                  <p className="text-xs text-muted-foreground">Developer & Support</p>
-                  <p className="text-xs mt-1">
-                    <span className="text-muted-foreground">USN:</span>{' '}
-                    <span className="text-primary font-semibold">3GN24CI047</span>
-                  </p>
-                </div>
-              </div>
-            </div>
+              <ChevronRight className="w-4 h-4 text-muted-foreground" />
+            </DropdownMenuItem>
 
             <DropdownMenuSeparator className="bg-border" />
 
@@ -239,5 +241,50 @@ export default function UserProfileDropdown() {
         )}
       </DropdownMenuContent>
     </DropdownMenu>
+
+    {/* Help & Support Dialog */}
+    <Dialog open={helpDialogOpen} onOpenChange={setHelpDialogOpen}>
+      <DialogContent className="sm:max-w-md p-0 overflow-hidden">
+        <DialogHeader className="p-6 pb-2">
+          <div className="flex items-center gap-2">
+            <HelpCircle className="w-6 h-6 text-primary" />
+            <DialogTitle className="text-xl font-bold">Help & Support</DialogTitle>
+          </div>
+          <p className="text-muted-foreground text-sm mt-1">
+            Need assistance? Contact our support team.
+          </p>
+        </DialogHeader>
+        
+        <div className="px-6 pb-4">
+          <div className="bg-secondary/50 dark:bg-secondary/30 rounded-xl p-4 border border-border/50">
+            <div className="flex items-start gap-4">
+              <div className="w-12 h-12 bg-primary/20 rounded-full flex items-center justify-center flex-shrink-0">
+                <span className="text-primary font-bold text-lg">JS</span>
+              </div>
+              <div className="flex-1">
+                <h4 className="font-semibold text-foreground">Jaspreet Singh</h4>
+                <p className="text-sm text-muted-foreground">Developer & Support</p>
+              </div>
+            </div>
+            <div className="mt-3 pl-16">
+              <p className="text-sm">
+                <span className="text-muted-foreground">USN:</span>{' '}
+                <span className="text-primary font-semibold">3GN24CI047</span>
+              </p>
+              <p className="text-sm text-muted-foreground mt-2">
+                For any help, queries, or issues with the portal, feel free to reach out!
+              </p>
+            </div>
+          </div>
+        </div>
+        
+        <div className="border-t border-border px-6 py-4">
+          <p className="text-center text-muted-foreground text-sm">
+            You can also report bugs or suggest features.
+          </p>
+        </div>
+      </DialogContent>
+    </Dialog>
+    </>
   );
 }
