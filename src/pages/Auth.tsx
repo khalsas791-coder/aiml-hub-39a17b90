@@ -73,9 +73,8 @@ export default function Auth() {
     try {
       emailSchema.parse(forgotPasswordEmail);
 
-      const redirectTo = new URL('/reset-password', window.location.origin).toString();
       const { error } = await supabase.auth.resetPasswordForEmail(forgotPasswordEmail, {
-        redirectTo,
+        redirectTo: 'https://aiml-hub.vercel.app/reset-password',
       });
 
       if (error) {
