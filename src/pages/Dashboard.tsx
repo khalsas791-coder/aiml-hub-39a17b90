@@ -151,7 +151,7 @@ export default function Dashboard() {
       <header className="sticky top-0 z-50 bg-card/80 backdrop-blur-lg border-b border-border dark:glass-strong dark:border-0">
         <div className="container flex items-center justify-between h-16 px-4">
           <div className="flex items-center gap-3">
-            <img src={aimlLogo} alt="AIML Logo" className="w-[160px] h-[160px] object-contain" />
+            <img src={aimlLogo} alt="AIML Logo" className="w-[80px] h-[80px] object-cover rounded-full shadow-glow-sm" />
             <span className="text-lg font-semibold text-foreground hidden sm:block">AIML Portal</span>
           </div>
 
