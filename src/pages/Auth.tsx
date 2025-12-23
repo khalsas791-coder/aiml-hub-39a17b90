@@ -72,7 +72,7 @@ export default function Auth() {
       emailSchema.parse(forgotPasswordEmail);
       
       const { error } = await supabase.auth.resetPasswordForEmail(forgotPasswordEmail, {
-        redirectTo: 'https://aimlpanel.netlify.app/reset-password',
+        redirectTo: 'https://aiml-hub.vercel.app/reset-password',
       });
       
       if (error) {
