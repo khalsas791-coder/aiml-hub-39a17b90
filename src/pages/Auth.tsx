@@ -214,7 +214,7 @@ export default function Auth() {
             </div>
 
             <Card className="border-0 glass glow-border relative overflow-hidden">
-              <div className="absolute inset-0 animate-shimmer opacity-50" />
+              <div className="absolute inset-0 animate-shimmer opacity-50 pointer-events-none" />
               <CardHeader className="pb-4">
                 <CardTitle className="text-lg">Reset Password</CardTitle>
                 <CardDescription>We'll send you a recovery link</CardDescription>
