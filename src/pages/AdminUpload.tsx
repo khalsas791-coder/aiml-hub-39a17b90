@@ -85,7 +85,7 @@ export default function AdminUpload() {
     try {
       const fileExt = form.file.name.split('.').pop();
       const fileName = `${Date.now()}_${form.file.name}`;
-      const folderPrefix = form.resourceType === 'pyq' ? 'pyq' : 'materials';
+      const folderPrefix = form.resourceType === 'pyq' ? 'pyq' : form.resourceType === 'lab_manual' ? 'lab-manuals' : 'materials';
       const filePath = `semester-${form.semester}/${form.subject}/${folderPrefix}/${fileName}`;
 
       const { error: uploadError } = await supabase.storage
@@ -178,6 +178,7 @@ export default function AdminUpload() {
                   <SelectContent>
                     <SelectItem value="material">Study Material</SelectItem>
                     <SelectItem value="pyq">Past Year Question (PYQ)</SelectItem>
+                    <SelectItem value="lab_manual">Lab Manual</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
@@ -225,7 +226,7 @@ export default function AdminUpload() {
                 <Input
                   id="title"
                   type="text"
-                  placeholder={form.resourceType === 'pyq' ? 'e.g., VTU Dec 2023' : 'e.g., Module 1 - Introduction'}
+                  placeholder={form.resourceType === 'pyq' ? 'e.g., VTU Dec 2023' : form.resourceType === 'lab_manual' ? 'e.g., DSA Lab Manual' : 'e.g., Module 1 - Introduction'}
                   value={form.title}
                   onChange={(e) => setForm({ ...form, title: e.target.value })}
                   className="h-12 rounded-xl"
