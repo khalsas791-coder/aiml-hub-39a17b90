@@ -9,8 +9,8 @@ import ProfileStats from '@/components/ProfileStats';
 import ShareButton from '@/components/ShareButton';
 import LanguageSelector from '@/components/LanguageSelector';
 import UserProfileDropdown from '@/components/UserProfileDropdown';
+import aimlLogo from '@/assets/aiml-logo.png';
 import { 
-  BookOpen, 
   Upload, 
   LogOut, 
   ChevronRight, 
@@ -21,7 +21,6 @@ import {
   Coffee,
   Monitor,
   FolderOpen,
-  User,
   Sparkles,
   Brain
 } from 'lucide-react';
@@ -65,9 +64,7 @@ export default function Dashboard() {
       <header className="sticky top-0 z-50 bg-card/80 backdrop-blur-lg border-b border-border dark:glass-strong dark:border-0">
         <div className="container flex items-center justify-between h-16 px-4">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 gradient-primary rounded-xl flex items-center justify-center shadow-glow-sm">
-              <BookOpen className="w-5 h-5 text-primary-foreground" />
-            </div>
+            <img src={aimlLogo} alt="AIML Logo" className="w-[100px] h-[100px] object-contain" />
             <span className="text-lg font-semibold text-foreground hidden sm:block">AIML Portal</span>
           </div>
 

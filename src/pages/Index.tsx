@@ -1,9 +1,10 @@
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
-import { BookOpen, GraduationCap, ArrowRight, FileText, Upload, Users, Zap } from 'lucide-react';
+import { ArrowRight, FileText, Upload, Users, Zap } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import { useEffect } from 'react';
 import NetworkBackground from '@/components/NetworkBackground';
+import aimlLogo from '@/assets/aiml-logo.png';
 
 const Index = () => {
   const navigate = useNavigate();
@@ -23,9 +24,7 @@ const Index = () => {
       <header className="p-6 relative z-10">
         <div className="container flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 gradient-primary rounded-xl flex items-center justify-center shadow-glow-sm">
-              <BookOpen className="w-5 h-5 text-primary-foreground" />
-            </div>
+            <img src={aimlLogo} alt="AIML Logo" className="w-[100px] h-[100px] object-contain" />
             <span className="text-xl font-bold text-foreground">AIML Portal</span>
           </div>
           <Button 
