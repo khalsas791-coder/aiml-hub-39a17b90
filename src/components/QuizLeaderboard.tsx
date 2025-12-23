@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Trophy, Medal, Award } from 'lucide-react';
+import { Trophy } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 interface LeaderboardEntry {
@@ -64,17 +64,21 @@ export default function QuizLeaderboard({ subjectId }: QuizLeaderboardProps) {
     fetchLeaderboard();
   }, [subjectId]);
 
-  const getRankIcon = (rank: number) => {
-    switch (rank) {
-      case 1:
-        return <Trophy className="w-5 h-5 text-yellow-500" />;
-      case 2:
-        return <Medal className="w-5 h-5 text-gray-400" />;
-      case 3:
-        return <Award className="w-5 h-5 text-amber-600" />;
-      default:
-        return <span className="w-5 h-5 flex items-center justify-center text-sm font-bold text-muted-foreground">{rank}</span>;
-    }
+  const getRankDisplay = (rank: number) => {
+    const rankColors = {
+      1: 'text-yellow-500 font-bold',
+      2: 'text-gray-400 font-bold',
+      3: 'text-amber-600 font-bold',
+    };
+    
+    return (
+      <span className={cn(
+        "text-lg",
+        rankColors[rank as keyof typeof rankColors] || 'text-muted-foreground font-medium'
+      )}>
+        #{rank}
+      </span>
+    );
   };
 
   if (loading) {
@@ -119,8 +123,8 @@ export default function QuizLeaderboard({ subjectId }: QuizLeaderboardProps) {
                 entry.rank === 3 ? "bg-amber-600/10" : "bg-secondary/30"
               )}
             >
-              <div className="flex items-center gap-2">
-                {getRankIcon(entry.rank)}
+              <div className="flex items-center">
+                {getRankDisplay(entry.rank)}
               </div>
               <span className="font-medium text-foreground">{entry.usn}</span>
               <span className="text-right font-bold text-primary">
