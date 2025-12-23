@@ -1,8 +1,17 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -14,6 +23,14 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from '@/components/ui/alert-dialog';
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from '@/components/ui/dialog';
 import NetworkBackground from '@/components/NetworkBackground';
 import ThemeToggle from '@/components/ThemeToggle';
 import UserProfileDropdown from '@/components/UserProfileDropdown';
@@ -32,7 +49,9 @@ import {
   Code2,
   Coffee,
   Monitor,
-  ChevronRight
+  ChevronRight,
+  Upload,
+  Plus
 } from 'lucide-react';
 import { toast } from 'sonner';
 import { useAuth } from '@/contexts/AuthContext';
@@ -65,11 +84,19 @@ const subjects: SubjectData[] = [
 
 export default function LabManuals() {
   const navigate = useNavigate();
-  const { role } = useAuth();
+  const { role, user } = useAuth();
   const [labManuals, setLabManuals] = useState<Resource[]>([]);
   const [loading, setLoading] = useState(true);
   const [selectedSubject, setSelectedSubject] = useState<string | null>(null);
   const [deleting, setDeleting] = useState<string | null>(null);
+  
+  // Upload state
+  const [uploadDialogOpen, setUploadDialogOpen] = useState(false);
+  const [uploading, setUploading] = useState(false);
+  const [uploadSubject, setUploadSubject] = useState('');
+  const [uploadTitle, setUploadTitle] = useState('');
+  const [uploadFile, setUploadFile] = useState<File | null>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const isAdmin = role === 'admin';
 
@@ -179,6 +206,67 @@ export default function LabManuals() {
     return subjects.find(s => s.id === subjectId);
   };
 
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      if (file.type !== 'application/pdf') {
+        toast.error('Only PDF files are allowed');
+        return;
+      }
+      if (file.size > 50 * 1024 * 1024) {
+        toast.error('File size must be less than 50MB');
+        return;
+      }
+      setUploadFile(file);
+    }
+  };
+
+  const handleUpload = async () => {
+    if (!uploadSubject || !uploadTitle.trim() || !uploadFile || !user) {
+      toast.error('Please fill all fields');
+      return;
+    }
+
+    setUploading(true);
+    try {
+      const fileExt = uploadFile.name.split('.').pop();
+      const fileName = `${Date.now()}-${Math.random().toString(36).substring(7)}.${fileExt}`;
+      const filePath = `semester-3/lab-manuals/${uploadSubject}/${fileName}`;
+
+      const { error: uploadError } = await supabase.storage
+        .from('resources')
+        .upload(filePath, uploadFile);
+
+      if (uploadError) throw uploadError;
+
+      const { error: dbError } = await supabase.from('resources').insert({
+        title: uploadTitle.trim(),
+        file_path: filePath,
+        file_name: uploadFile.name,
+        file_size: uploadFile.size,
+        semester: 3,
+        subject: uploadSubject,
+        resource_type: 'lab_manual',
+        uploaded_by: user.id
+      });
+
+      if (dbError) throw dbError;
+
+      toast.success('Lab manual uploaded successfully!');
+      setUploadDialogOpen(false);
+      setUploadSubject('');
+      setUploadTitle('');
+      setUploadFile(null);
+      if (fileInputRef.current) fileInputRef.current.value = '';
+      fetchLabManuals();
+    } catch (error) {
+      console.error('Upload error:', error);
+      toast.error('Failed to upload lab manual');
+    } finally {
+      setUploading(false);
+    }
+  };
+
   return (
     <div className="min-h-screen relative">
       <NetworkBackground />
@@ -216,6 +304,101 @@ export default function LabManuals() {
               {selectedSubject ? 'Lab manual resources' : 'Select a subject to view lab manuals'}
             </p>
           </div>
+
+          {/* Admin Upload Button */}
+          {isAdmin && (
+            <Dialog open={uploadDialogOpen} onOpenChange={setUploadDialogOpen}>
+              <DialogTrigger asChild>
+                <Button className="ml-auto gap-2 rounded-xl shadow-glow-sm">
+                  <Plus className="w-4 h-4" />
+                  Upload
+                </Button>
+              </DialogTrigger>
+              <DialogContent className="glass-strong border-border/50 max-w-md">
+                <DialogHeader>
+                  <DialogTitle className="flex items-center gap-2">
+                    <Upload className="w-5 h-5 text-pink-500" />
+                    Upload Lab Manual
+                  </DialogTitle>
+                  <DialogDescription>
+                    Upload a lab manual PDF for a subject
+                  </DialogDescription>
+                </DialogHeader>
+                <div className="space-y-4 pt-4">
+                  <div className="space-y-2">
+                    <Label>Subject</Label>
+                    <Select value={uploadSubject} onValueChange={setUploadSubject}>
+                      <SelectTrigger className="rounded-xl">
+                        <SelectValue placeholder="Select subject" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {subjects.map(subject => (
+                          <SelectItem key={subject.id} value={subject.id}>
+                            {subject.code} - {subject.name}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label>Title</Label>
+                    <Input
+                      value={uploadTitle}
+                      onChange={(e) => setUploadTitle(e.target.value)}
+                      placeholder="e.g., DSA Lab Manual - All Programs"
+                      className="rounded-xl"
+                    />
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label>PDF File</Label>
+                    <div className="border-2 border-dashed border-border/50 rounded-xl p-4 text-center hover:border-primary/50 transition-colors">
+                      <input
+                        ref={fileInputRef}
+                        type="file"
+                        accept=".pdf"
+                        onChange={handleFileChange}
+                        className="hidden"
+                        id="lab-manual-upload"
+                      />
+                      <label htmlFor="lab-manual-upload" className="cursor-pointer">
+                        {uploadFile ? (
+                          <div className="flex items-center justify-center gap-2 text-primary">
+                            <FileText className="w-5 h-5" />
+                            <span className="text-sm font-medium">{uploadFile.name}</span>
+                          </div>
+                        ) : (
+                          <div className="text-muted-foreground">
+                            <Upload className="w-8 h-8 mx-auto mb-2" />
+                            <p className="text-sm">Click to select PDF file</p>
+                          </div>
+                        )}
+                      </label>
+                    </div>
+                  </div>
+
+                  <Button
+                    onClick={handleUpload}
+                    disabled={uploading || !uploadSubject || !uploadTitle.trim() || !uploadFile}
+                    className="w-full gap-2 rounded-xl"
+                  >
+                    {uploading ? (
+                      <>
+                        <Loader2 className="w-4 h-4 animate-spin" />
+                        Uploading...
+                      </>
+                    ) : (
+                      <>
+                        <Upload className="w-4 h-4" />
+                        Upload Lab Manual
+                      </>
+                    )}
+                  </Button>
+                </div>
+              </DialogContent>
+            </Dialog>
+          )}
         </div>
 
         {loading ? (
