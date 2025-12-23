@@ -4,7 +4,7 @@ import { ArrowRight, FileText, Upload, Users, Zap } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import { useEffect } from 'react';
 import NetworkBackground from '@/components/NetworkBackground';
-import aimlLogo from '@/assets/aiml-logo.png';
+import aimlLogo from '@/assets/aiml-logo-new.png';
 
 const Index = () => {
   const navigate = useNavigate();
@@ -24,7 +24,7 @@ const Index = () => {
       <header className="p-6 relative z-10">
         <div className="container flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <img src={aimlLogo} alt="AIML Logo" className="w-[100px] h-[100px] object-cover rounded-full" />
+            <img src={aimlLogo} alt="AIML Logo" className="w-[160px] h-[160px] object-contain" />
             <span className="text-xl font-bold text-foreground">AIML Portal</span>
           </div>
           <Button 
