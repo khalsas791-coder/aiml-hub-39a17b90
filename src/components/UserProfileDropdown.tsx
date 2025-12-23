@@ -1,15 +1,26 @@
 import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
 import { supabase } from '@/integrations/supabase/client';
 import { Button } from '@/components/ui/button';
 import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from '@/components/ui/popover';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { User, Save, Loader2 } from 'lucide-react';
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
+import { Switch } from '@/components/ui/switch';
+import { 
+  User, 
+  ChevronRight, 
+  Settings, 
+  Bell, 
+  Share2, 
+  HelpCircle, 
+  LogOut,
+  Loader2
+} from 'lucide-react';
 import { toast } from 'sonner';
 
 interface ProfileData {
@@ -19,14 +30,15 @@ interface ProfileData {
 }
 
 export default function UserProfileDropdown() {
-  const { user, role } = useAuth();
+  const { user, role, signOut } = useAuth();
+  const navigate = useNavigate();
   const [profile, setProfile] = useState<ProfileData>({
     full_name: null,
     usn: null,
     phone_number: null,
   });
   const [loading, setLoading] = useState(true);
-  const [saving, setSaving] = useState(false);
+  const [notificationsEnabled, setNotificationsEnabled] = useState(true);
   const [isOpen, setIsOpen] = useState(false);
 
   useEffect(() => {
@@ -54,7 +66,6 @@ export default function UserProfileDropdown() {
         phone_number: data.phone_number,
       });
     } else {
-      // Set from user metadata if no profile exists
       setProfile({
         full_name: user.user_metadata?.full_name || null,
         usn: user.user_metadata?.usn || null,
@@ -64,29 +75,31 @@ export default function UserProfileDropdown() {
     setLoading(false);
   };
 
-  const handleSave = async () => {
-    if (!user) return;
+  const handleSignOut = async () => {
+    setIsOpen(false);
+    await signOut();
+    toast.success('Signed out successfully');
+    navigate('/auth');
+  };
 
-    setSaving(true);
-    const { error } = await supabase
-      .from('profiles')
-      .upsert({
-        user_id: user.id,
-        full_name: profile.full_name,
-        usn: profile.usn,
-        phone_number: profile.phone_number,
-        updated_at: new Date().toISOString(),
-      }, {
-        onConflict: 'user_id'
-      });
+  const handleShare = async () => {
+    const shareData = {
+      title: 'AIML Portal',
+      text: 'Check out this amazing AI/ML Resource Portal!',
+      url: window.location.origin,
+    };
 
-    if (error) {
-      toast.error('Failed to save profile');
-      console.error('Error saving profile:', error);
-    } else {
-      toast.success('Profile saved successfully');
+    try {
+      if (navigator.share) {
+        await navigator.share(shareData);
+      } else {
+        await navigator.clipboard.writeText(window.location.origin);
+        toast.success('Link copied to clipboard!');
+      }
+    } catch (error) {
+      console.error('Error sharing:', error);
     }
-    setSaving(false);
+    setIsOpen(false);
   };
 
   const displayName = profile.full_name || 
@@ -95,95 +108,129 @@ export default function UserProfileDropdown() {
                       'User';
 
   return (
-    <Popover open={isOpen} onOpenChange={setIsOpen}>
-      <PopoverTrigger asChild>
+    <DropdownMenu open={isOpen} onOpenChange={setIsOpen}>
+      <DropdownMenuTrigger asChild>
         <Button variant="ghost" className="flex items-center gap-2 px-3 py-1.5 glass rounded-full hover:shadow-glow-sm transition-all">
-          <User className="w-4 h-4 text-primary" />
           <span className="text-sm font-medium text-foreground hidden sm:inline">{displayName}</span>
-          {role === 'admin' && (
-            <span className="px-2 py-0.5 text-xs font-semibold gradient-primary text-primary-foreground rounded-full">
+          {role === 'admin' ? (
+            <span className="px-2 py-0.5 text-xs font-semibold bg-primary text-primary-foreground rounded-full">
               Admin
             </span>
-          )}
-        </Button>
-      </PopoverTrigger>
-      <PopoverContent className="w-80 p-4" align="end">
-        <div className="space-y-4">
-          <div className="flex items-center gap-3 pb-3 border-b border-border">
-            <div className="w-12 h-12 rounded-full gradient-primary flex items-center justify-center">
-              <User className="w-6 h-6 text-primary-foreground" />
-            </div>
-            <div>
-              <h3 className="font-semibold text-foreground">Student Details</h3>
-              <p className="text-xs text-muted-foreground">Manage your profile information</p>
-            </div>
-          </div>
-
-          {loading ? (
-            <div className="flex items-center justify-center py-8">
-              <Loader2 className="w-6 h-6 animate-spin text-primary" />
-            </div>
           ) : (
-            <div className="space-y-3">
-              <div className="space-y-1.5">
-                <Label htmlFor="name" className="text-xs text-muted-foreground">Full Name</Label>
-                <Input
-                  id="name"
-                  value={profile.full_name || ''}
-                  onChange={(e) => setProfile({ ...profile, full_name: e.target.value })}
-                  placeholder="Enter your name"
-                  className="h-9"
-                />
-              </div>
-
-              <div className="space-y-1.5">
-                <Label htmlFor="usn" className="text-xs text-muted-foreground">USN</Label>
-                <Input
-                  id="usn"
-                  value={profile.usn || ''}
-                  onChange={(e) => setProfile({ ...profile, usn: e.target.value.toUpperCase() })}
-                  placeholder="3GN24CI000"
-                  className="h-9"
-                />
-              </div>
-
-              <div className="space-y-1.5">
-                <Label htmlFor="email" className="text-xs text-muted-foreground">Email</Label>
-                <Input
-                  id="email"
-                  value={user?.email || ''}
-                  disabled
-                  className="h-9 bg-muted/50"
-                />
-              </div>
-
-              <div className="space-y-1.5">
-                <Label htmlFor="phone" className="text-xs text-muted-foreground">Phone Number</Label>
-                <Input
-                  id="phone"
-                  value={profile.phone_number || ''}
-                  onChange={(e) => setProfile({ ...profile, phone_number: e.target.value })}
-                  placeholder="+91 XXXXXXXXXX"
-                  className="h-9"
-                />
-              </div>
-
-              <Button 
-                onClick={handleSave} 
-                disabled={saving}
-                className="w-full gap-2 mt-2"
-              >
-                {saving ? (
-                  <Loader2 className="w-4 h-4 animate-spin" />
-                ) : (
-                  <Save className="w-4 h-4" />
-                )}
-                Save Changes
-              </Button>
-            </div>
+            <span className="px-2 py-0.5 text-xs font-semibold bg-primary/20 text-primary rounded-full">
+              Student
+            </span>
           )}
-        </div>
-      </PopoverContent>
-    </Popover>
+          <div className="w-8 h-8 rounded-full bg-primary flex items-center justify-center">
+            <span className="text-sm font-bold text-primary-foreground">
+              {displayName.charAt(0).toUpperCase()}
+            </span>
+          </div>
+        </Button>
+      </DropdownMenuTrigger>
+      <DropdownMenuContent className="w-72 p-2 bg-card border border-border shadow-xl z-50" align="end" sideOffset={8}>
+        {loading ? (
+          <div className="flex items-center justify-center py-8">
+            <Loader2 className="w-6 h-6 animate-spin text-primary" />
+          </div>
+        ) : (
+          <>
+            {/* User Info Header */}
+            <div className="flex items-center gap-3 p-3 mb-2">
+              <div className="w-12 h-12 rounded-full bg-primary flex items-center justify-center">
+                <span className="text-lg font-bold text-primary-foreground">
+                  {displayName.charAt(0).toUpperCase()}
+                </span>
+              </div>
+              <div className="flex-1 min-w-0">
+                <p className="font-semibold text-foreground truncate">{displayName}</p>
+                <p className="text-sm text-muted-foreground truncate">{user?.email}</p>
+              </div>
+            </div>
+
+            <DropdownMenuSeparator className="bg-border" />
+
+            {/* Menu Items */}
+            <DropdownMenuItem 
+              className="flex items-center justify-between p-3 cursor-pointer hover:bg-secondary/50 rounded-lg"
+              onClick={() => {
+                setIsOpen(false);
+                toast.info('Profile page coming soon!');
+              }}
+            >
+              <div className="flex items-center gap-3">
+                <User className="w-5 h-5 text-muted-foreground" />
+                <span className="text-foreground">My Profile</span>
+              </div>
+              <ChevronRight className="w-4 h-4 text-muted-foreground" />
+            </DropdownMenuItem>
+
+            <DropdownMenuItem 
+              className="flex items-center justify-between p-3 cursor-pointer hover:bg-secondary/50 rounded-lg"
+              onClick={() => {
+                setIsOpen(false);
+                toast.info('Settings page coming soon!');
+              }}
+            >
+              <div className="flex items-center gap-3">
+                <Settings className="w-5 h-5 text-muted-foreground" />
+                <span className="text-foreground">Settings</span>
+              </div>
+              <ChevronRight className="w-4 h-4 text-muted-foreground" />
+            </DropdownMenuItem>
+
+            <div 
+              className="flex items-center justify-between p-3 hover:bg-secondary/50 rounded-lg"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <div className="flex items-center gap-3">
+                <Bell className="w-5 h-5 text-muted-foreground" />
+                <span className="text-foreground">Notification</span>
+              </div>
+              <Switch 
+                checked={notificationsEnabled} 
+                onCheckedChange={setNotificationsEnabled}
+                className="data-[state=checked]:bg-primary"
+              />
+            </div>
+
+            <DropdownMenuItem 
+              className="flex items-center justify-between p-3 cursor-pointer hover:bg-secondary/50 rounded-lg"
+              onClick={handleShare}
+            >
+              <div className="flex items-center gap-3">
+                <Share2 className="w-5 h-5 text-muted-foreground" />
+                <span className="text-foreground">Share App</span>
+              </div>
+              <ChevronRight className="w-4 h-4 text-muted-foreground" />
+            </DropdownMenuItem>
+
+            <DropdownMenuItem 
+              className="flex items-center justify-between p-3 cursor-pointer hover:bg-secondary/50 rounded-lg"
+              onClick={() => {
+                setIsOpen(false);
+                toast.info('Help & Support coming soon!');
+              }}
+            >
+              <div className="flex items-center gap-3">
+                <HelpCircle className="w-5 h-5 text-muted-foreground" />
+                <span className="text-foreground">Help & Support</span>
+              </div>
+              <ChevronRight className="w-4 h-4 text-muted-foreground" />
+            </DropdownMenuItem>
+
+            <DropdownMenuSeparator className="bg-border" />
+
+            <DropdownMenuItem 
+              className="flex items-center gap-3 p-3 cursor-pointer hover:bg-destructive/10 rounded-lg text-destructive"
+              onClick={handleSignOut}
+            >
+              <LogOut className="w-5 h-5" />
+              <span className="font-medium">Log Out</span>
+            </DropdownMenuItem>
+          </>
+        )}
+      </DropdownMenuContent>
+    </DropdownMenu>
   );
 }
