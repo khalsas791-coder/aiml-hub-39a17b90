@@ -24,7 +24,7 @@ const Index = () => {
       <header className="p-6 relative z-10">
         <div className="container flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <img src={aimlLogo} alt="AIML Logo" className="w-[100px] h-[100px] object-contain" />
+            <img src={aimlLogo} alt="AIML Logo" className="w-[100px] h-[100px] object-cover rounded-full" />
             <span className="text-xl font-bold text-foreground">AIML Portal</span>
           </div>
           <Button 
