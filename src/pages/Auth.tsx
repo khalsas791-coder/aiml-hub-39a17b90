@@ -187,7 +187,7 @@ export default function Auth() {
         <GlowRing />
         
         {/* Gradient overlay */}
-        <div className="absolute inset-0 bg-gradient-to-br from-sky-500/5 via-transparent to-blue-600/5 animate-gradient-shift" />
+        <div className="absolute inset-0 bg-gradient-to-br from-sky-500/5 via-transparent to-blue-600/5 animate-gradient-shift pointer-events-none" />
         
         <header className="p-6 relative z-10">
           <div className="flex items-center gap-3">
@@ -268,7 +268,7 @@ export default function Auth() {
       <GlowRing />
       
       {/* Gradient overlay */}
-      <div className="absolute inset-0 bg-gradient-to-br from-sky-500/5 via-transparent to-blue-600/5 animate-gradient-shift" />
+      <div className="absolute inset-0 bg-gradient-to-br from-sky-500/5 via-transparent to-blue-600/5 animate-gradient-shift pointer-events-none" />
       
       <header className="p-6 relative z-10">
         <div className="flex items-center gap-3">
