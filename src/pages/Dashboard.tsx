@@ -1,18 +1,16 @@
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
+import { useEffect, useState } from 'react';
+import { supabase } from '@/integrations/supabase/client';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import NetworkBackground from '@/components/NetworkBackground';
-import NotificationBell from '@/components/NotificationBell';
 import ThemeToggle from '@/components/ThemeToggle';
 import ProfileStats from '@/components/ProfileStats';
-import ShareButton from '@/components/ShareButton';
-import LanguageSelector from '@/components/LanguageSelector';
 import UserProfileDropdown from '@/components/UserProfileDropdown';
 import aimlLogo from '@/assets/aiml-logo.png';
 import { 
   Upload, 
-  LogOut, 
   ChevronRight, 
   GraduationCap,
   Calculator,
@@ -20,25 +18,120 @@ import {
   Code2,
   Coffee,
   Monitor,
-  FolderOpen,
   Sparkles,
-  Brain,
-  CalendarDays
+  CalendarDays,
+  BookOpen,
+  FlaskConical,
+  BarChart3,
+  FolderOpen
 } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { toast } from 'sonner';
 
-const subjects3rdSem = [
-  { id: 'mathematics', name: 'Mathematics', icon: Calculator, color: 'from-cyan-500/20 to-blue-500/20 text-cyan-400' },
-  { id: 'ddco', name: 'DDCO', icon: Cpu, color: 'from-purple-500/20 to-pink-500/20 text-purple-400' },
-  { id: 'dsa', name: 'DSA', icon: Code2, color: 'from-emerald-500/20 to-teal-500/20 text-emerald-400' },
-  { id: 'java', name: 'Java', icon: Coffee, color: 'from-orange-500/20 to-amber-500/20 text-orange-400' },
-  { id: 'os', name: 'Operating Systems', icon: Monitor, color: 'from-rose-500/20 to-red-500/20 text-rose-400' },
+interface SubjectData {
+  id: string;
+  code: string;
+  name: string;
+  description: string;
+  icon: React.ElementType;
+  color: string;
+  iconBg: string;
+}
+
+const subjects3rdSem: SubjectData[] = [
+  { 
+    id: 'dsa', 
+    code: 'BCS304',
+    name: 'Data Structures and Algorithms', 
+    description: 'Fundamental data structures and algorithm design',
+    icon: Code2, 
+    color: 'text-purple-500',
+    iconBg: 'bg-purple-500'
+  },
+  { 
+    id: 'ddco', 
+    code: 'BCS302',
+    name: 'Digital Design & Computer Organization', 
+    description: 'Digital logic design and computer architecture',
+    icon: Cpu, 
+    color: 'text-purple-500',
+    iconBg: 'bg-purple-500'
+  },
+  { 
+    id: 'lab-manuals', 
+    code: 'LAB301',
+    name: 'Lab Manuals', 
+    description: 'Laboratory manuals and practical guides for all subjects',
+    icon: BookOpen, 
+    color: 'text-pink-500',
+    iconBg: 'bg-pink-500'
+  },
+  { 
+    id: 'mathematics', 
+    code: 'BCS301',
+    name: 'Mathematics', 
+    description: 'Advanced mathematical concepts and applications',
+    icon: Calculator, 
+    color: 'text-purple-500',
+    iconBg: 'bg-purple-500'
+  },
+  { 
+    id: 'os', 
+    code: 'BCS303',
+    name: 'Operating Systems', 
+    description: 'Operating system concepts and design',
+    icon: Monitor, 
+    color: 'text-purple-500',
+    iconBg: 'bg-purple-500'
+  },
+  { 
+    id: 'java', 
+    code: 'BDS306C',
+    name: 'Java Programming', 
+    description: 'Object-oriented programming with Java',
+    icon: Coffee, 
+    color: 'text-pink-500',
+    iconBg: 'bg-pink-500'
+  },
 ];
 
 export default function Dashboard() {
   const { user, role, signOut } = useAuth();
   const navigate = useNavigate();
+  const [resourceCounts, setResourceCounts] = useState<Record<string, number>>({});
+
+  useEffect(() => {
+    fetchResourceCounts();
+  }, []);
+
+  const fetchResourceCounts = async () => {
+    try {
+      const { data, error } = await supabase
+        .from('resources')
+        .select('subject')
+        .eq('semester', 3);
+
+      if (error) throw error;
+
+      const counts: Record<string, number> = {};
+      data?.forEach(resource => {
+        counts[resource.subject] = (counts[resource.subject] || 0) + 1;
+      });
+      
+      // Count lab manuals separately
+      const { data: labData } = await supabase
+        .from('resources')
+        .select('id')
+        .eq('semester', 3)
+        .eq('resource_type', 'lab_manual');
+      
+      counts['lab-manuals'] = labData?.length || 0;
+      
+      setResourceCounts(counts);
+    } catch (error) {
+      console.error('Error fetching resource counts:', error);
+    }
+  };
 
   const handleSignOut = async () => {
     await signOut();
@@ -46,12 +139,13 @@ export default function Dashboard() {
     navigate('/auth');
   };
 
-  const handleSubjectClick = (semester: number, subjectId: string) => {
-    navigate(`/semester/${semester}/subject/${subjectId}`);
-  };
-
-  const handleQuizClick = (subjectId: string) => {
-    navigate(`/quiz/${subjectId}`);
+  const handleSubjectClick = (subjectId: string) => {
+    if (subjectId === 'lab-manuals') {
+      // Navigate to a lab manuals page or show all lab manuals
+      navigate(`/semester/3/subject/dsa?tab=lab_manual`);
+    } else {
+      navigate(`/semester/3/subject/${subjectId}`);
+    }
   };
 
   const displayName = user?.user_metadata?.full_name || 
@@ -132,52 +226,100 @@ export default function Dashboard() {
           </div>
         </Card>
 
-        <div className="grid gap-6 lg:grid-cols-2">
-          <div className="animate-slide-up" style={{ animationDelay: '100ms' }}>
-            <div className="flex items-center justify-between mb-4">
-              <h2 className="text-xl font-bold text-foreground flex items-center gap-2">
-                <Sparkles className="w-5 h-5 text-primary" />3rd Semester
-              </h2>
-              <span className="text-sm text-muted-foreground">{subjects3rdSem.length} Subjects</span>
+        {/* 3rd Semester Section */}
+        <div className="animate-slide-up" style={{ animationDelay: '100ms' }}>
+          <div className="flex items-center gap-3 mb-6">
+            <div className="w-12 h-12 bg-purple-500 rounded-xl flex items-center justify-center">
+              <Monitor className="w-6 h-6 text-white" />
             </div>
-            <Card className="border shadow-md dark:border-0 dark:glass dark:glow-border">
-              <CardContent className="p-2">
-                {subjects3rdSem.map((subject, index) => (
-                  <div key={subject.id} className="flex items-center gap-4 p-4 rounded-xl hover:bg-secondary/50 transition-all group" style={{ animationDelay: `${(index + 1) * 50}ms` }}>
-                    <button onClick={() => handleSubjectClick(3, subject.id)} className="flex-1 flex items-center gap-4">
-                      <div className={`w-12 h-12 rounded-xl flex items-center justify-center bg-gradient-to-br ${subject.color}`}>
-                        <subject.icon className="w-6 h-6" />
-                      </div>
-                      <div className="flex-1 text-left">
-                        <p className="font-semibold text-foreground group-hover:text-primary transition-colors">{subject.name}</p>
-                        <p className="text-sm text-muted-foreground">View materials</p>
-                      </div>
-                    </button>
-                    <Button variant="outline" size="sm" onClick={() => handleQuizClick(subject.id)} className="gap-1 rounded-full border-primary/30 text-primary hover:bg-primary/10 hover:shadow-glow-sm">
-                      <Brain className="w-3 h-3" />Quiz
-                    </Button>
-                    <ChevronRight className="w-5 h-5 text-muted-foreground group-hover:text-primary group-hover:translate-x-1 transition-all cursor-pointer" onClick={() => handleSubjectClick(3, subject.id)} />
-                  </div>
-                ))}
-              </CardContent>
-            </Card>
+            <div>
+              <h2 className="text-xl font-bold text-foreground">3rd Semester</h2>
+              <p className="text-sm text-muted-foreground">Core subjects</p>
+            </div>
           </div>
 
-          <div className="animate-slide-up" style={{ animationDelay: '200ms' }}>
-            <div className="flex items-center justify-between mb-4">
-              <h2 className="text-xl font-bold text-foreground">4th Semester</h2>
-              <span className="px-2 py-1 text-xs font-medium bg-accent text-accent-foreground rounded-full border border-primary/30">Coming Soon</span>
-            </div>
-            <Card className="border shadow-md dark:border-0 dark:glass">
-              <CardContent className="p-8 flex flex-col items-center justify-center text-center min-h-[300px]">
-                <div className="w-16 h-16 bg-secondary rounded-2xl flex items-center justify-center mb-4 animate-pulse-glow">
-                  <FolderOpen className="w-8 h-8 text-muted-foreground" />
-                </div>
-                <h3 className="text-lg font-semibold text-foreground mb-2">No Subjects Yet</h3>
-                <p className="text-muted-foreground text-sm max-w-xs">4th semester subjects will be added here when available. Check back later!</p>
-              </CardContent>
-            </Card>
+          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+            {subjects3rdSem.map((subject, index) => (
+              <Card 
+                key={subject.id}
+                onClick={() => handleSubjectClick(subject.id)}
+                className="group cursor-pointer border border-border/50 bg-card/80 backdrop-blur-sm overflow-hidden
+                  transition-all duration-300 ease-out
+                  hover:shadow-2xl hover:shadow-purple-500/10
+                  hover:-translate-y-2 hover:rotate-1
+                  active:scale-[0.98]
+                  dark:bg-card/40 dark:hover:bg-card/60
+                  animate-fade-in"
+                style={{ 
+                  animationDelay: `${(index + 1) * 100}ms`,
+                  transformStyle: 'preserve-3d',
+                  perspective: '1000px'
+                }}
+              >
+                <CardContent className="p-5 relative">
+                  {/* Decorative Ring */}
+                  <div className="absolute top-4 right-4 w-12 h-12 rounded-full border-2 border-purple-200 dark:border-purple-800/50 opacity-50 group-hover:opacity-100 group-hover:scale-110 transition-all duration-300" />
+                  
+                  {/* Icon */}
+                  <div className={`w-12 h-12 ${subject.iconBg} rounded-xl flex items-center justify-center mb-4 shadow-lg group-hover:scale-110 group-hover:rotate-3 transition-all duration-300`}>
+                    <subject.icon className="w-6 h-6 text-white" />
+                  </div>
+
+                  {/* Subject Code */}
+                  <p className={`text-sm font-medium ${subject.color} mb-1`}>{subject.code}</p>
+                  
+                  {/* Subject Name */}
+                  <h3 className="font-bold text-foreground text-lg mb-2 group-hover:text-primary transition-colors line-clamp-1">
+                    {subject.name}
+                  </h3>
+                  
+                  {/* Description */}
+                  <p className="text-sm text-muted-foreground mb-4 line-clamp-2">
+                    {subject.description}
+                  </p>
+
+                  {/* Footer */}
+                  <div className="flex items-center justify-between pt-2 border-t border-border/50">
+                    <div className="flex items-center gap-2 text-muted-foreground">
+                      <FolderOpen className="w-4 h-4" />
+                      <span className="text-sm">{resourceCounts[subject.id] || 0} resources</span>
+                    </div>
+                    <ChevronRight className="w-5 h-5 text-muted-foreground group-hover:text-primary group-hover:translate-x-1 transition-all" />
+                  </div>
+                </CardContent>
+              </Card>
+            ))}
           </div>
+        </div>
+
+        {/* 4th Semester Coming Soon */}
+        <div className="mt-10 animate-slide-up" style={{ animationDelay: '400ms' }}>
+          <div className="flex items-center justify-between mb-4">
+            <div className="flex items-center gap-3">
+              <div className="w-12 h-12 bg-secondary rounded-xl flex items-center justify-center">
+                <GraduationCap className="w-6 h-6 text-muted-foreground" />
+              </div>
+              <div>
+                <h2 className="text-xl font-bold text-foreground">4th Semester</h2>
+                <p className="text-sm text-muted-foreground">Upcoming subjects</p>
+              </div>
+            </div>
+            <span className="px-3 py-1.5 text-xs font-medium bg-accent text-accent-foreground rounded-full border border-primary/30">
+              Coming Soon
+            </span>
+          </div>
+          
+          <Card className="border shadow-md dark:border-0 dark:glass opacity-60">
+            <CardContent className="p-8 flex flex-col items-center justify-center text-center min-h-[200px]">
+              <div className="w-16 h-16 bg-secondary rounded-2xl flex items-center justify-center mb-4 animate-pulse">
+                <FolderOpen className="w-8 h-8 text-muted-foreground" />
+              </div>
+              <h3 className="text-lg font-semibold text-foreground mb-2">No Subjects Yet</h3>
+              <p className="text-muted-foreground text-sm max-w-xs">
+                4th semester subjects will be added here when available. Check back later!
+              </p>
+            </CardContent>
+          </Card>
         </div>
       </main>
     </div>
