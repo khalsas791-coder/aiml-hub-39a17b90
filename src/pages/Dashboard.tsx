@@ -8,6 +8,7 @@ import ThemeToggle from '@/components/ThemeToggle';
 import ProfileStats from '@/components/ProfileStats';
 import ShareButton from '@/components/ShareButton';
 import LanguageSelector from '@/components/LanguageSelector';
+import UserProfileDropdown from '@/components/UserProfileDropdown';
 import { 
   BookOpen, 
   Upload, 
@@ -85,11 +86,7 @@ export default function Dashboard() {
             <LanguageSelector />
             <ThemeToggle />
             <NotificationBell />
-            <div className="flex items-center gap-2 px-3 py-1.5 glass rounded-full">
-              <User className="w-4 h-4 text-primary" />
-              <span className="text-sm font-medium text-foreground hidden sm:inline">{displayName}</span>
-              {role === 'admin' && <span className="px-2 py-0.5 text-xs font-semibold gradient-primary text-primary-foreground rounded-full">Admin</span>}
-            </div>
+            <UserProfileDropdown />
             <Button variant="ghost" size="icon" onClick={handleSignOut} className="text-muted-foreground hover:text-primary rounded-full hover:shadow-glow-sm transition-all">
               <LogOut className="w-4 h-4" />
             </Button>
