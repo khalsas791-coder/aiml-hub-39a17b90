@@ -12,7 +12,7 @@ import { GraduationCap, Shield, Loader2, ArrowLeft, Mail, Users } from 'lucide-r
 import { toast } from 'sonner';
 import { z } from 'zod';
 import { validateName } from '@/lib/profanityFilter';
-import aimlLogo from '@/assets/aiml-logo.png';
+import aimlLogo from '@/assets/aiml-logo-new.png';
 
 // Floating bubble component for animation
 const FloatingBubbles = () => (
