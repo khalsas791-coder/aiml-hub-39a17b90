@@ -22,8 +22,10 @@ import {
   Monitor,
   FolderOpen,
   Sparkles,
-  Brain
+  Brain,
+  CalendarDays
 } from 'lucide-react';
+import { Badge } from '@/components/ui/badge';
 import { toast } from 'sonner';
 
 const subjects3rdSem = [
@@ -89,10 +91,33 @@ export default function Dashboard() {
 
       <main className="container px-4 py-8 relative z-10">
         <div className="mb-6 animate-fade-in">
-          <h1 className="text-2xl sm:text-3xl font-bold text-foreground mb-2 text-glow">
-            Good {new Date().getHours() < 12 ? 'morning' : new Date().getHours() < 17 ? 'afternoon' : 'evening'}, {displayName.split(' ')[0]}!
+          <p className="text-muted-foreground text-sm mb-1">Hello,</p>
+          <h1 className="text-2xl sm:text-3xl font-bold text-primary mb-3">
+            {displayName.split(' ')[0]}
           </h1>
-          <p className="text-muted-foreground">Access your study materials and resources</p>
+          <div className="flex flex-wrap items-center gap-2">
+            <Badge className="gap-1.5 px-3 py-1.5 bg-primary text-primary-foreground hover:bg-primary/90 cursor-default">
+              <Sparkles className="w-3.5 h-3.5" />
+              Student
+            </Badge>
+            <Button 
+              variant="outline" 
+              size="sm" 
+              onClick={() => navigate('/calculator')} 
+              className="gap-1.5 rounded-full border-border hover:border-primary/50 text-foreground"
+            >
+              <Calculator className="w-3.5 h-3.5" />
+              CGPA Calculator
+            </Button>
+            <Button 
+              variant="outline" 
+              size="sm" 
+              className="gap-1.5 rounded-full border-border hover:border-primary/50 text-foreground"
+            >
+              <CalendarDays className="w-3.5 h-3.5" />
+              Timetable
+            </Button>
+          </div>
         </div>
 
         <ProfileStats />
