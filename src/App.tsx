@@ -16,6 +16,7 @@ import AdminUpload from "./pages/AdminUpload";
 import Calculator from "./pages/Calculator";
 import Quiz from "./pages/Quiz";
 import Timetable from "./pages/Timetable";
+import LabManuals from "./pages/LabManuals";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -80,6 +81,15 @@ const App = () => (
                 element={
                   <ProtectedRoute>
                     <Timetable />
+                  </ProtectedRoute>
+                } 
+              />
+              <Route 
+                path="/lab-manuals" 
+                element={
+                  <ProtectedRoute>
+                    <LabManuals />
+                    <ChatBot />
                   </ProtectedRoute>
                 } 
               />
