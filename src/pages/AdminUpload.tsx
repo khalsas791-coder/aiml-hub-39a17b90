@@ -8,6 +8,7 @@ import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { ArrowLeft, Upload, FileUp, Loader2, CheckCircle, AlertCircle } from 'lucide-react';
+import appLogo from '@/assets/app-logo.png';
 import { toast } from 'sonner';
 
 const subjects = [
@@ -136,6 +137,7 @@ export default function AdminUpload() {
       {/* Header */}
       <header className="sticky top-0 z-50 bg-background/80 backdrop-blur-xl border-b border-border/50">
         <div className="container flex items-center h-16 px-4 gap-4">
+          <img src={appLogo} alt="AIML Logo" className="w-10 h-10 object-contain" />
           <Button 
             variant="ghost" 
             size="icon"

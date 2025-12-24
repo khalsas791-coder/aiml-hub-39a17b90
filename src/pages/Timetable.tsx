@@ -5,7 +5,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@
 import NetworkBackground from '@/components/NetworkBackground';
 import ThemeToggle from '@/components/ThemeToggle';
 import UserProfileDropdown from '@/components/UserProfileDropdown';
-import aimlLogo from '@/assets/aiml-logo.png';
+import appLogo from '@/assets/app-logo.png';
 import { ArrowLeft, CalendarDays, Clock } from 'lucide-react';
 
 interface ClassSlot {
@@ -136,7 +136,7 @@ export default function Timetable() {
       <header className="sticky top-0 z-50 bg-card/80 backdrop-blur-lg border-b border-border dark:glass-strong dark:border-0">
         <div className="container flex items-center justify-between h-16 px-4">
           <div className="flex items-center gap-3">
-            <img src={aimlLogo} alt="AIML Logo" className="w-[100px] h-[100px] object-cover rounded-full" />
+            <img src={appLogo} alt="AIML Logo" className="w-12 h-12 object-contain" />
             <span className="text-lg font-semibold text-foreground hidden sm:block">AIML Portal</span>
           </div>
 

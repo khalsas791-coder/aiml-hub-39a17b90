@@ -36,6 +36,7 @@ import {
   RefreshCw
 } from 'lucide-react';
 import { toast } from 'sonner';
+import appLogo from '@/assets/app-logo.png';
 
 interface UserRole {
   id: string;
@@ -198,6 +199,7 @@ export default function AdminPanel() {
       {/* Header */}
       <header className="sticky top-0 z-50 bg-background/80 backdrop-blur-xl border-b border-border/50">
         <div className="container flex items-center h-16 px-4 gap-4">
+          <img src={appLogo} alt="AIML Logo" className="w-10 h-10 object-contain" />
           <Button 
             variant="ghost" 
             size="icon"
