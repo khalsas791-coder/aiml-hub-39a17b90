@@ -8,6 +8,7 @@ import NetworkBackground from '@/components/NetworkBackground';
 import ThemeToggle from '@/components/ThemeToggle';
 import ProfileStats from '@/components/ProfileStats';
 import UserProfileDropdown from '@/components/UserProfileDropdown';
+import DashboardLeaderboard from '@/components/DashboardLeaderboard';
 import appLogo from '@/assets/app-logo.png';
 import { 
   Upload, 
@@ -91,10 +92,25 @@ export default function Dashboard() {
   const { user, role, signOut } = useAuth();
   const navigate = useNavigate();
   const [resourceCounts, setResourceCounts] = useState<Record<string, number>>({});
+  const [isTeacher, setIsTeacher] = useState(false);
 
   useEffect(() => {
     fetchResourceCounts();
-  }, []);
+    fetchProfile();
+  }, [user]);
+
+  const fetchProfile = async () => {
+    if (!user) return;
+    const { data } = await supabase
+      .from('profiles')
+      .select('is_teacher')
+      .eq('user_id', user.id)
+      .maybeSingle();
+    
+    if (data) {
+      setIsTeacher(data.is_teacher || false);
+    }
+  };
 
   const fetchResourceCounts = async () => {
     try {
@@ -184,7 +200,7 @@ export default function Dashboard() {
           <div className="flex flex-wrap items-center gap-2">
             <Badge className="gap-1.5 px-3 py-1.5 bg-primary text-primary-foreground hover:bg-primary/90 cursor-default">
               <Sparkles className="w-3.5 h-3.5" />
-              {user?.user_metadata?.is_teacher ? 'Teacher' : 'Student'}
+              {isTeacher ? 'Teacher' : 'Student'}
             </Badge>
             <Button 
               variant="outline" 
@@ -337,6 +353,11 @@ export default function Dashboard() {
               </CardContent>
             </Card>
           </div>
+        </div>
+
+        {/* Daily Quiz Leaderboard */}
+        <div className="mt-10 animate-slide-up" style={{ animationDelay: '350ms' }}>
+          <DashboardLeaderboard />
         </div>
 
         {/* 4th Semester Coming Soon */}
