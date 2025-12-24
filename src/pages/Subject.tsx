@@ -17,6 +17,7 @@ import {
   AlertDialogTrigger,
 } from '@/components/ui/alert-dialog';
 import NetworkBackground from '@/components/NetworkBackground';
+import appLogo from '@/assets/app-logo.png';
 import { 
   ArrowLeft, 
   Download, 
@@ -274,6 +275,7 @@ export default function Subject() {
       {/* Header */}
       <header className="sticky top-0 z-50 glass-strong">
         <div className="container flex items-center h-16 px-4 gap-4">
+          <img src={appLogo} alt="AIML Logo" className="w-10 h-10 object-contain" />
           <Button 
             variant="ghost" 
             size="icon"

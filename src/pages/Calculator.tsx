@@ -9,6 +9,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { ArrowLeft, Calculator, Plus, Trash2, GraduationCap } from 'lucide-react';
 import { toast } from 'sonner';
 import NetworkBackground from '@/components/NetworkBackground';
+import appLogo from '@/assets/app-logo.png';
 
 interface Subject {
   id: string;
@@ -129,6 +130,7 @@ export default function CalculatorPage() {
       {/* Header */}
       <header className="sticky top-0 z-50 glass-strong">
         <div className="container flex items-center h-16 px-4 gap-4">
+          <img src={appLogo} alt="AIML Logo" className="w-10 h-10 object-contain" />
           <Button 
             variant="ghost" 
             size="icon"

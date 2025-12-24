@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import NetworkBackground from '@/components/NetworkBackground';
 import QuizLeaderboard from '@/components/QuizLeaderboard';
+import appLogo from '@/assets/app-logo.png';
 import { 
   ArrowLeft, 
   Brain, 
@@ -440,14 +441,17 @@ export default function Quiz() {
       {/* Header */}
       <header className="sticky top-0 z-50 glass-strong">
         <div className="container flex items-center justify-between h-16 px-4">
-          <Button 
-            variant="ghost" 
-            onClick={() => navigate(-1)}
-            className="gap-2 text-muted-foreground hover:text-primary"
-          >
-            <ArrowLeft className="w-4 h-4" />
-            Exit Quiz
-          </Button>
+          <div className="flex items-center gap-3">
+            <img src={appLogo} alt="AIML Logo" className="w-10 h-10 object-contain" />
+            <Button 
+              variant="ghost" 
+              onClick={() => navigate(-1)}
+              className="gap-2 text-muted-foreground hover:text-primary"
+            >
+              <ArrowLeft className="w-4 h-4" />
+              Exit Quiz
+            </Button>
+          </div>
           
           <div className="flex items-center gap-4">
             <div className="flex items-center gap-2 px-3 py-1.5 glass rounded-full">
