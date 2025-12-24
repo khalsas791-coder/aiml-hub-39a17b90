@@ -76,7 +76,7 @@ export default function QuizLeaderboard({ subjectId }: QuizLeaderboardProps) {
           
           return {
             rank: index + 1,
-            displayName: isCurrentUser && usn ? usn : `Participant #${index + 1}`,
+            displayName: usn || `User ${index + 1}`,
             score: attempt.score,
             total: attempt.total_questions,
             isCurrentUser,
@@ -110,7 +110,7 @@ export default function QuizLeaderboard({ subjectId }: QuizLeaderboardProps) {
           
           return {
             rank: index + 1,
-            displayName: isCurrentUser && usn ? usn : `Participant #${index + 1}`,
+            displayName: usn || `User ${index + 1}`,
             score: data.total,
             total: data.questions,
             isCurrentUser,
