@@ -44,7 +44,7 @@ import {
   FolderOpen,
   BookOpen,
   Trash2,
-  Calculator,
+  
   Cpu,
   Code2,
   Coffee,
@@ -77,7 +77,7 @@ interface SubjectData {
 const subjects: SubjectData[] = [
   { id: 'dsa', code: 'BCS304', name: 'Data Structures and Algorithms', icon: Code2, color: 'bg-purple-500' },
   { id: 'ddco', code: 'BCS302', name: 'Digital Design & Computer Organization', icon: Cpu, color: 'bg-purple-500' },
-  { id: 'mathematics', code: 'BCS301', name: 'Mathematics', icon: Calculator, color: 'bg-purple-500' },
+  { id: 'php', code: 'BCS305', name: 'PHP Programming', icon: Code2, color: 'bg-purple-500' },
   { id: 'os', code: 'BCS303', name: 'Operating Systems', icon: Monitor, color: 'bg-purple-500' },
   { id: 'java', code: 'BDS306C', name: 'Java Programming', icon: Coffee, color: 'bg-pink-500' },
 ];

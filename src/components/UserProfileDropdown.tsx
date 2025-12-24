@@ -48,6 +48,7 @@ export default function UserProfileDropdown() {
   const [notificationsEnabled, setNotificationsEnabled] = useState(true);
   const [isOpen, setIsOpen] = useState(false);
   const [helpDialogOpen, setHelpDialogOpen] = useState(false);
+  const [profileDialogOpen, setProfileDialogOpen] = useState(false);
 
   useEffect(() => {
     if (user) {
@@ -164,7 +165,7 @@ export default function UserProfileDropdown() {
               className="flex items-center justify-between p-3 cursor-pointer hover:bg-secondary/50 rounded-lg"
               onClick={() => {
                 setIsOpen(false);
-                toast.info('Profile page coming soon!');
+                setProfileDialogOpen(true);
               }}
             >
               <div className="flex items-center gap-3">
@@ -282,6 +283,68 @@ export default function UserProfileDropdown() {
           <p className="text-center text-muted-foreground text-sm">
             You can also report bugs or suggest features.
           </p>
+        </div>
+      </DialogContent>
+    </Dialog>
+
+    {/* Profile Dialog */}
+    <Dialog open={profileDialogOpen} onOpenChange={setProfileDialogOpen}>
+      <DialogContent className="sm:max-w-md p-0 overflow-hidden">
+        <DialogHeader className="p-6 pb-2">
+          <div className="flex items-center gap-2">
+            <User className="w-6 h-6 text-primary" />
+            <DialogTitle className="text-xl font-bold">My Profile</DialogTitle>
+          </div>
+          <p className="text-muted-foreground text-sm mt-1">
+            Your account information
+          </p>
+        </DialogHeader>
+        
+        <div className="px-6 pb-4">
+          <div className="bg-secondary/50 dark:bg-secondary/30 rounded-xl p-4 border border-border/50">
+            <div className="flex items-center gap-4 mb-4">
+              <div className="w-16 h-16 bg-primary rounded-full flex items-center justify-center flex-shrink-0">
+                <span className="text-primary-foreground font-bold text-2xl">
+                  {displayName.charAt(0).toUpperCase()}
+                </span>
+              </div>
+              <div className="flex-1">
+                <h4 className="font-semibold text-foreground text-lg">{profile.full_name || 'Not set'}</h4>
+                <span className="text-xs px-2 py-0.5 bg-primary/20 text-primary rounded-full">
+                  {role === 'admin' ? 'Admin' : 'Student'}
+                </span>
+              </div>
+            </div>
+            
+            <div className="space-y-3">
+              <div className="flex items-center justify-between py-2 border-b border-border/30">
+                <span className="text-muted-foreground text-sm">Name</span>
+                <span className="text-foreground font-medium">{profile.full_name || 'Not set'}</span>
+              </div>
+              <div className="flex items-center justify-between py-2 border-b border-border/30">
+                <span className="text-muted-foreground text-sm">USN</span>
+                <span className="text-primary font-semibold">{profile.usn || 'Not set'}</span>
+              </div>
+              <div className="flex items-center justify-between py-2 border-b border-border/30">
+                <span className="text-muted-foreground text-sm">Email</span>
+                <span className="text-foreground font-medium text-sm">{user?.email || 'Not set'}</span>
+              </div>
+              <div className="flex items-center justify-between py-2">
+                <span className="text-muted-foreground text-sm">Admission No.</span>
+                <span className="text-foreground font-medium">{profile.usn || 'Not set'}</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <div className="border-t border-border px-6 py-4">
+          <Button 
+            variant="outline" 
+            className="w-full rounded-xl"
+            onClick={() => setProfileDialogOpen(false)}
+          >
+            Close
+          </Button>
         </div>
       </DialogContent>
     </Dialog>
