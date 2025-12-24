@@ -302,18 +302,19 @@ export default function Timetable() {
             <CardTitle className="text-lg">Faculty Abbreviations</CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3 text-sm">
-              <div><span className="font-semibold text-primary">KG</span> - Faculty</div>
-              <div><span className="font-semibold text-primary">RP</span> - Faculty</div>
-              <div><span className="font-semibold text-primary">SM</span> - Faculty</div>
-              <div><span className="font-semibold text-primary">JM</span> - Faculty</div>
-              <div><span className="font-semibold text-primary">NK</span> - Faculty</div>
-              <div><span className="font-semibold text-primary">DJ</span> - Faculty</div>
-              <div><span className="font-semibold text-primary">JKA</span> - Faculty</div>
-              <div><span className="font-semibold text-primary">SCR</span> - Faculty</div>
-              <div><span className="font-semibold text-primary">NSS</span> - NSS Activity</div>
-              <div><span className="font-semibold text-primary">NM</span> - Faculty</div>
-              <div><span className="font-semibold text-primary">NS</span> - Faculty</div>
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3 text-sm">
+              <div><span className="font-semibold text-primary">M3 / JM</span> - Prof. Jyothi M</div>
+              <div><span className="font-semibold text-primary">DDCO / SM</span> - Prof. Soni M</div>
+              <div><span className="font-semibold text-primary">DDCOL / KG</span> - Mrs. Kaveri</div>
+              <div><span className="font-semibold text-primary">OS / DJ</span> - Dr. Dayanand J</div>
+              <div><span className="font-semibold text-primary">OSL / NM</span> - Ms. Namratha M</div>
+              <div><span className="font-semibold text-primary">DSA / SK</span> - Prof. Nasreen Kausar</div>
+              <div><span className="font-semibold text-primary">DSAL / JKA / NK</span> - Dr. Jasmineet Kaur Arora / Prof. Nasreen Kausar</div>
+              <div><span className="font-semibold text-primary">JAVA / RP</span> - Prof. Rony Preetam</div>
+              <div><span className="font-semibold text-primary">JAVAL / RP</span> - Prof. Rony Preetam</div>
+              <div><span className="font-semibold text-primary">SCR / NS</span> - Ms. Kaveri</div>
+              <div><span className="font-semibold text-primary">Git / NS</span> - Prof. Netravati Sawale</div>
+              <div><span className="font-semibold text-primary">NSS / PE</span> - Prof. Rony Preetam / Ms. Namratha</div>
               <div><span className="font-semibold text-primary">LIB</span> - Library</div>
             </div>
           </CardContent>
