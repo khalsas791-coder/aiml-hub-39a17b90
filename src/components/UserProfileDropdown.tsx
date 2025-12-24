@@ -318,20 +318,26 @@ export default function UserProfileDropdown() {
             
             <div className="space-y-3">
               <div className="flex items-center justify-between py-2 border-b border-border/30">
-                <span className="text-muted-foreground text-sm">Name</span>
-                <span className="text-foreground font-medium">{profile.full_name || 'Not set'}</span>
+                <span className="text-muted-foreground text-sm">Full Name</span>
+                <span className="text-foreground font-medium">{profile.full_name || user?.user_metadata?.full_name || 'Not set'}</span>
               </div>
               <div className="flex items-center justify-between py-2 border-b border-border/30">
-                <span className="text-muted-foreground text-sm">USN</span>
-                <span className="text-primary font-semibold">{profile.usn || 'Not set'}</span>
+                <span className="text-muted-foreground text-sm">USN / Admission No.</span>
+                <span className="text-primary font-semibold">{profile.usn || user?.user_metadata?.usn || 'Not set'}</span>
               </div>
               <div className="flex items-center justify-between py-2 border-b border-border/30">
                 <span className="text-muted-foreground text-sm">Email</span>
-                <span className="text-foreground font-medium text-sm">{user?.email || 'Not set'}</span>
+                <span className="text-foreground font-medium text-sm truncate max-w-[180px]">{user?.email || 'Not set'}</span>
               </div>
+              {profile.phone_number && (
+                <div className="flex items-center justify-between py-2 border-b border-border/30">
+                  <span className="text-muted-foreground text-sm">Phone</span>
+                  <span className="text-foreground font-medium">{profile.phone_number}</span>
+                </div>
+              )}
               <div className="flex items-center justify-between py-2">
-                <span className="text-muted-foreground text-sm">Admission No.</span>
-                <span className="text-foreground font-medium">{profile.usn || 'Not set'}</span>
+                <span className="text-muted-foreground text-sm">Role</span>
+                <span className="text-foreground font-medium capitalize">{role || 'Student'}</span>
               </div>
             </div>
           </div>
