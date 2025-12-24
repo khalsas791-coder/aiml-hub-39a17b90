@@ -8,7 +8,7 @@ import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Switch } from '@/components/ui/switch';
-import { GraduationCap, Shield, Loader2, ArrowLeft, Mail, Users } from 'lucide-react';
+import { GraduationCap, Shield, Loader2, ArrowLeft, Mail, Users, Eye, EyeOff } from 'lucide-react';
 import { toast } from 'sonner';
 import { z } from 'zod';
 import { validateName } from '@/lib/profanityFilter';
@@ -63,6 +63,8 @@ export default function Auth() {
   const [studentForm, setStudentForm] = useState({ email: '', password: '', name: '', usn: '' });
   const [isTeacher, setIsTeacher] = useState(false);
   const [adminForm, setAdminForm] = useState({ email: '', password: '' });
+  const [showStudentPassword, setShowStudentPassword] = useState(false);
+  const [showAdminPassword, setShowAdminPassword] = useState(false);
   const { signIn, signUp } = useAuth();
   const navigate = useNavigate();
 
@@ -121,6 +123,7 @@ export default function Auth() {
         const { error } = await signUp(studentForm.email, studentForm.password, {
           full_name: studentForm.name,
           usn: isTeacher ? undefined : studentForm.usn,
+          is_teacher: isTeacher,
         });
         
         if (error) {
@@ -370,14 +373,23 @@ export default function Auth() {
                     
                     <div className="space-y-2">
                       <Label htmlFor="student-password" className="text-sm font-medium text-foreground">Password</Label>
-                      <Input 
-                        id="student-password" 
-                        type="password" 
-                        placeholder="Enter your password" 
-                        value={studentForm.password} 
-                        onChange={(e) => setStudentForm({ ...studentForm, password: e.target.value })} 
-                        className="h-12 rounded-xl bg-secondary/30 border-border/30 focus:border-primary/50 focus:ring-1 focus:ring-primary/20 transition-all placeholder:text-muted-foreground/50" 
-                      />
+                      <div className="relative">
+                        <Input 
+                          id="student-password" 
+                          type={showStudentPassword ? "text" : "password"} 
+                          placeholder="Enter your password" 
+                          value={studentForm.password} 
+                          onChange={(e) => setStudentForm({ ...studentForm, password: e.target.value })} 
+                          className="h-12 rounded-xl bg-secondary/30 border-border/30 focus:border-primary/50 focus:ring-1 focus:ring-primary/20 transition-all placeholder:text-muted-foreground/50 pr-12" 
+                        />
+                        <button
+                          type="button"
+                          onClick={() => setShowStudentPassword(!showStudentPassword)}
+                          className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors"
+                        >
+                          {showStudentPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
+                        </button>
+                      </div>
                     </div>
                     {!isSignUp && (
                       <button 
@@ -422,14 +434,23 @@ export default function Auth() {
                     </div>
                     <div className="space-y-2">
                       <Label htmlFor="admin-password" className="text-sm font-medium text-foreground">Password</Label>
-                      <Input 
-                        id="admin-password" 
-                        type="password" 
-                        placeholder="Enter your password" 
-                        value={adminForm.password} 
-                        onChange={(e) => setAdminForm({ ...adminForm, password: e.target.value })} 
-                        className="h-12 rounded-xl bg-secondary/30 border-border/30 focus:border-primary/50 focus:ring-1 focus:ring-primary/20 transition-all placeholder:text-muted-foreground/50" 
-                      />
+                      <div className="relative">
+                        <Input 
+                          id="admin-password" 
+                          type={showAdminPassword ? "text" : "password"} 
+                          placeholder="Enter your password" 
+                          value={adminForm.password} 
+                          onChange={(e) => setAdminForm({ ...adminForm, password: e.target.value })} 
+                          className="h-12 rounded-xl bg-secondary/30 border-border/30 focus:border-primary/50 focus:ring-1 focus:ring-primary/20 transition-all placeholder:text-muted-foreground/50 pr-12" 
+                        />
+                        <button
+                          type="button"
+                          onClick={() => setShowAdminPassword(!showAdminPassword)}
+                          className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors"
+                        >
+                          {showAdminPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
+                        </button>
+                      </div>
                     </div>
                     <button 
                       type="button" 

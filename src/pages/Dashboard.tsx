@@ -184,7 +184,7 @@ export default function Dashboard() {
           <div className="flex flex-wrap items-center gap-2">
             <Badge className="gap-1.5 px-3 py-1.5 bg-primary text-primary-foreground hover:bg-primary/90 cursor-default">
               <Sparkles className="w-3.5 h-3.5" />
-              Student
+              {user?.user_metadata?.is_teacher ? 'Teacher' : 'Student'}
             </Badge>
             <Button 
               variant="outline" 
