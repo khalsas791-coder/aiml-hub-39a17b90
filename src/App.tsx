@@ -13,6 +13,7 @@ import ResetPassword from "./pages/ResetPassword";
 import Dashboard from "./pages/Dashboard";
 import Subject from "./pages/Subject";
 import AdminUpload from "./pages/AdminUpload";
+import AdminPanel from "./pages/AdminPanel";
 import Calculator from "./pages/Calculator";
 import Quiz from "./pages/Quiz";
 import Timetable from "./pages/Timetable";
@@ -56,6 +57,14 @@ const App = () => (
                 element={
                   <ProtectedRoute>
                     <AdminUpload />
+                  </ProtectedRoute>
+                } 
+              />
+              <Route 
+                path="/admin/panel" 
+                element={
+                  <ProtectedRoute>
+                    <AdminPanel />
                   </ProtectedRoute>
                 } 
               />

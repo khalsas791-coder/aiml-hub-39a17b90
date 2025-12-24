@@ -23,7 +23,8 @@ import {
   BookOpen,
   FlaskConical,
   BarChart3,
-  FolderOpen
+  FolderOpen,
+  Shield
 } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { toast } from 'sonner';
@@ -157,10 +158,16 @@ export default function Dashboard() {
 
           <div className="flex items-center gap-2">
             {role === 'admin' && (
-              <Button variant="outline" size="sm" onClick={() => navigate('/admin/upload')} className="gap-2 rounded-full border-border/50 hover:border-primary/50 hover:shadow-glow-sm transition-all">
-                <Upload className="w-4 h-4" />
-                <span className="hidden sm:inline">Upload</span>
-              </Button>
+              <>
+                <Button variant="outline" size="sm" onClick={() => navigate('/admin/upload')} className="gap-2 rounded-full border-border/50 hover:border-primary/50 hover:shadow-glow-sm transition-all">
+                  <Upload className="w-4 h-4" />
+                  <span className="hidden sm:inline">Upload</span>
+                </Button>
+                <Button variant="outline" size="sm" onClick={() => navigate('/admin/panel')} className="gap-2 rounded-full border-border/50 hover:border-primary/50 hover:shadow-glow-sm transition-all">
+                  <Shield className="w-4 h-4" />
+                  <span className="hidden sm:inline">Admin</span>
+                </Button>
+              </>
             )}
             <ThemeToggle />
             <UserProfileDropdown />
