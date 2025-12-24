@@ -70,7 +70,7 @@ export default function DashboardLeaderboard() {
         
         return {
           rank: index + 1,
-          displayName: isCurrentUser && usn ? usn : `Participant #${index + 1}`,
+          displayName: usn || `User ${index + 1}`,
           totalScore: data.total,
           totalQuestions: data.questions,
           quizCount: data.count,
