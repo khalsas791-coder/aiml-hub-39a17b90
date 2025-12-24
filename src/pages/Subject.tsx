@@ -25,6 +25,7 @@ import {
   Loader2,
   FolderOpen,
   BookOpen,
+  Brain,
   Trash2,
   FileQuestion
 } from 'lucide-react';
@@ -285,6 +286,15 @@ export default function Subject() {
             <h1 className="text-lg font-semibold text-foreground line-clamp-1 text-glow">{subjectName}</h1>
             <p className="text-sm text-muted-foreground">Semester {semester}</p>
           </div>
+          <Button 
+            variant="outline" 
+            size="sm"
+            onClick={() => navigate(`/quiz/${subjectId}`)}
+            className="gap-2 rounded-full border-border/50 hover:border-primary/50 hover:shadow-glow-sm transition-all"
+          >
+            <Brain className="w-4 h-4" />
+            <span className="hidden sm:inline">Daily Quiz</span>
+          </Button>
         </div>
       </header>
 

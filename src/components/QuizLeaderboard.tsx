@@ -3,12 +3,12 @@ import { supabase } from '@/integrations/supabase/client';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { useAuth } from '@/contexts/AuthContext';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Trophy } from 'lucide-react';
+import { Trophy, Medal } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 interface LeaderboardEntry {
   rank: number;
-  usn: string;
+  displayName: string;
   score: number;
   total: number;
   isCurrentUser: boolean;
@@ -23,11 +23,25 @@ export default function QuizLeaderboard({ subjectId }: QuizLeaderboardProps) {
   const { user } = useAuth();
   const [leaderboard, setLeaderboard] = useState<LeaderboardEntry[]>([]);
   const [loading, setLoading] = useState(true);
+  const [currentUserUsn, setCurrentUserUsn] = useState<string | null>(null);
 
   useEffect(() => {
     const fetchLeaderboard = async () => {
       setLoading(true);
       const today = new Date().toISOString().split('T')[0];
+      
+      // Fetch current user's USN
+      if (user) {
+        const { data: profile } = await supabase
+          .from('profiles')
+          .select('usn')
+          .eq('user_id', user.id)
+          .maybeSingle();
+        
+        if (profile?.usn) {
+          setCurrentUserUsn(profile.usn);
+        }
+      }
       
       // Fetch today's quiz attempts for this subject
       const { data: attempts } = await supabase
@@ -44,14 +58,28 @@ export default function QuizLeaderboard({ subjectId }: QuizLeaderboardProps) {
         return;
       }
 
-      // Make leaderboard anonymous - only show "You" for current user
-      const leaderboardData: LeaderboardEntry[] = attempts.map((attempt, index) => ({
-        rank: index + 1,
-        usn: attempt.user_id === user?.id ? 'You' : `Student #${index + 1}`,
-        score: attempt.score,
-        total: attempt.total_questions,
-        isCurrentUser: attempt.user_id === user?.id,
-      }));
+      // Fetch USNs for all users in leaderboard
+      const userIds = attempts.map(a => a.user_id);
+      const { data: profiles } = await supabase
+        .from('profiles')
+        .select('user_id, usn')
+        .in('user_id', userIds);
+
+      const usnMap = new Map(profiles?.map(p => [p.user_id, p.usn]) || []);
+
+      // Build leaderboard with anonymous display
+      const leaderboardData: LeaderboardEntry[] = attempts.map((attempt, index) => {
+        const isCurrentUser = attempt.user_id === user?.id;
+        const usn = usnMap.get(attempt.user_id);
+        
+        return {
+          rank: index + 1,
+          displayName: isCurrentUser && usn ? usn : `Participant #${index + 1}`,
+          score: attempt.score,
+          total: attempt.total_questions,
+          isCurrentUser,
+        };
+      });
 
       setLeaderboard(leaderboardData);
       setLoading(false);
@@ -61,19 +89,32 @@ export default function QuizLeaderboard({ subjectId }: QuizLeaderboardProps) {
   }, [subjectId, user?.id]);
 
   const getRankDisplay = (rank: number) => {
-    const rankColors = {
-      1: 'text-yellow-500 font-bold',
-      2: 'text-gray-400 font-bold',
-      3: 'text-amber-600 font-bold',
-    };
-    
+    if (rank === 1) {
+      return (
+        <div className="flex items-center gap-1">
+          <Medal className="w-5 h-5 text-yellow-500" />
+          <span className="text-yellow-500 font-bold text-lg">#1</span>
+        </div>
+      );
+    }
+    if (rank === 2) {
+      return (
+        <div className="flex items-center gap-1">
+          <Medal className="w-5 h-5 text-gray-400" />
+          <span className="text-gray-400 font-bold text-lg">#2</span>
+        </div>
+      );
+    }
+    if (rank === 3) {
+      return (
+        <div className="flex items-center gap-1">
+          <Medal className="w-5 h-5 text-amber-600" />
+          <span className="text-amber-600 font-bold text-lg">#3</span>
+        </div>
+      );
+    }
     return (
-      <span className={cn(
-        "text-lg",
-        rankColors[rank as keyof typeof rankColors] || 'text-muted-foreground font-medium'
-      )}>
-        #{rank}
-      </span>
+      <span className="text-muted-foreground font-medium text-lg">#{rank}</span>
     );
   };
 
@@ -92,20 +133,20 @@ export default function QuizLeaderboard({ subjectId }: QuizLeaderboardProps) {
   }
 
   return (
-    <Card className="glass border-0 glow-border mt-6">
+    <Card className="glass border-0 glow-border mt-6 max-w-2xl mx-auto">
       <CardHeader className="pb-2">
         <CardTitle className="text-lg flex items-center gap-2">
           <Trophy className="w-5 h-5 text-primary" />
-          {t('quiz.leaderboard')}
+          Today's Leaderboard
         </CardTitle>
       </CardHeader>
       <CardContent>
         <div className="space-y-2">
           {/* Header */}
           <div className="grid grid-cols-3 gap-4 px-3 py-2 text-xs font-semibold text-muted-foreground uppercase">
-            <span>{t('quiz.rank')}</span>
+            <span>Rank</span>
             <span>Participant</span>
-            <span className="text-right">{t('quiz.score')}</span>
+            <span className="text-right">Score</span>
           </div>
           
           {/* Entries */}
@@ -124,10 +165,13 @@ export default function QuizLeaderboard({ subjectId }: QuizLeaderboardProps) {
                 {getRankDisplay(entry.rank)}
               </div>
               <span className={cn(
-                "font-medium",
+                "font-medium flex items-center",
                 entry.isCurrentUser ? "text-primary font-bold" : "text-foreground"
               )}>
-                {entry.usn}
+                {entry.displayName}
+                {entry.isCurrentUser && (
+                  <span className="ml-2 text-xs bg-primary/20 text-primary px-2 py-0.5 rounded-full">You</span>
+                )}
               </span>
               <span className="text-right font-bold text-primary">
                 {entry.score}/{entry.total}
