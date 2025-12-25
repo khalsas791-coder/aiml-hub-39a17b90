@@ -14,6 +14,30 @@ export type Database = {
   }
   public: {
     Tables: {
+      activity_logs: {
+        Row: {
+          activity_date: string
+          activity_type: string
+          created_at: string
+          id: string
+          user_id: string
+        }
+        Insert: {
+          activity_date?: string
+          activity_type: string
+          created_at?: string
+          id?: string
+          user_id: string
+        }
+        Update: {
+          activity_date?: string
+          activity_type?: string
+          created_at?: string
+          id?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       notifications: {
         Row: {
           created_at: string
@@ -134,6 +158,35 @@ export type Database = {
         }
         Relationships: []
       }
+      resource_views: {
+        Row: {
+          id: string
+          resource_id: string | null
+          user_id: string
+          viewed_at: string
+        }
+        Insert: {
+          id?: string
+          resource_id?: string | null
+          user_id: string
+          viewed_at?: string
+        }
+        Update: {
+          id?: string
+          resource_id?: string | null
+          user_id?: string
+          viewed_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "resource_views_resource_id_fkey"
+            columns: ["resource_id"]
+            isOneToOne: false
+            referencedRelation: "resources"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       resources: {
         Row: {
           created_at: string
@@ -173,6 +226,27 @@ export type Database = {
           title?: string
           updated_at?: string
           uploaded_by?: string | null
+        }
+        Relationships: []
+      }
+      subject_explorations: {
+        Row: {
+          explored_at: string
+          id: string
+          subject: string
+          user_id: string
+        }
+        Insert: {
+          explored_at?: string
+          id?: string
+          subject: string
+          user_id: string
+        }
+        Update: {
+          explored_at?: string
+          id?: string
+          subject?: string
+          user_id?: string
         }
         Relationships: []
       }
