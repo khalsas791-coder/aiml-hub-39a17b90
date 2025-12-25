@@ -1,9 +1,10 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
+import { trackResourceView, trackSubjectExploration } from '@/lib/activityTracker';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import {
   AlertDialog,
@@ -53,14 +54,23 @@ const subjectNames: Record<string, string> = {
 export default function Subject() {
   const { semester, subjectId } = useParams<{ semester: string; subjectId: string }>();
   const navigate = useNavigate();
-  const { role } = useAuth();
+  const { role, user } = useAuth();
   const [materials, setMaterials] = useState<Resource[]>([]);
   const [pyqs, setPyqs] = useState<Resource[]>([]);
   const [loading, setLoading] = useState(true);
   const [deleting, setDeleting] = useState<string | null>(null);
+  const hasTrackedExploration = useRef(false);
 
   const isAdmin = role === 'admin';
   const subjectName = subjectId ? subjectNames[subjectId] || subjectId : 'Subject';
+
+  // Track subject exploration on first visit
+  useEffect(() => {
+    if (user && subjectId && !hasTrackedExploration.current) {
+      hasTrackedExploration.current = true;
+      trackSubjectExploration(user.id, subjectId);
+    }
+  }, [user, subjectId]);
 
   useEffect(() => {
     fetchResources();
@@ -99,6 +109,11 @@ export default function Subject() {
       
       if (error) throw error;
       window.open(data.signedUrl, '_blank');
+      
+      // Track resource view for stats
+      if (user) {
+        trackResourceView(user.id, resource.id);
+      }
     } catch (error) {
       console.error('Error viewing file:', error);
       toast.error('Failed to open file');

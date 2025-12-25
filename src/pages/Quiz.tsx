@@ -7,6 +7,7 @@ import { Card, CardContent } from '@/components/ui/card';
 import NetworkBackground from '@/components/NetworkBackground';
 import QuizLeaderboard from '@/components/QuizLeaderboard';
 import appLogo from '@/assets/app-logo.png';
+import { trackQuizCompletion } from '@/lib/activityTracker';
 import { 
   ArrowLeft, 
   Brain, 
@@ -247,6 +248,9 @@ export default function Quiz() {
         }, {
           onConflict: 'user_id'
         });
+
+      // Track quiz completion for activity streak
+      trackQuizCompletion(user.id);
 
       toast.success(`Quiz completed! Score: ${finalScore}/${questions.length}`);
     }

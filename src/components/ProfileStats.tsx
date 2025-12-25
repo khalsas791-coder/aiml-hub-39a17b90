@@ -4,19 +4,31 @@ import { Card } from '@/components/ui/card';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
 
-interface Stats {
+interface DashboardStats {
   resources_viewed: number;
+  resources_growth: number;
+  resources_period: string;
   quizzes_completed: number;
+  quizzes_growth: number;
+  quizzes_period: string;
   subjects_explored: number;
+  subjects_growth: number;
+  subjects_period: string;
   study_streak: number;
 }
 
 export default function ProfileStats() {
   const { user } = useAuth();
-  const [stats, setStats] = useState<Stats>({
+  const [stats, setStats] = useState<DashboardStats>({
     resources_viewed: 0,
+    resources_growth: 0,
+    resources_period: 'this week',
     quizzes_completed: 0,
+    quizzes_growth: 0,
+    quizzes_period: 'this month',
     subjects_explored: 0,
+    subjects_growth: 0,
+    subjects_period: 'this week',
     study_streak: 0
   });
   const [loading, setLoading] = useState(true);
@@ -25,30 +37,50 @@ export default function ProfileStats() {
     if (!user) return;
 
     const fetchStats = async () => {
-      const { data } = await supabase
-        .from('user_stats')
-        .select('*')
-        .eq('user_id', user.id)
-        .maybeSingle();
-      
-      if (data) {
-        setStats({
-          resources_viewed: data.resources_viewed || 0,
-          quizzes_completed: data.quizzes_completed || 0,
-          subjects_explored: data.subjects_explored || 0,
-          study_streak: data.study_streak || 0
-        });
-      } else {
-        // Create initial stats
-        await supabase
-          .from('user_stats')
-          .insert({ user_id: user.id });
+      try {
+        const { data, error } = await supabase.functions.invoke('dashboard-stats');
+        
+        if (error) {
+          console.error('Error fetching dashboard stats:', error);
+          // Fallback to legacy user_stats
+          const { data: legacyData } = await supabase
+            .from('user_stats')
+            .select('*')
+            .eq('user_id', user.id)
+            .maybeSingle();
+          
+          if (legacyData) {
+            setStats({
+              resources_viewed: legacyData.resources_viewed || 0,
+              resources_growth: 0,
+              resources_period: 'this week',
+              quizzes_completed: legacyData.quizzes_completed || 0,
+              quizzes_growth: 0,
+              quizzes_period: 'this month',
+              subjects_explored: legacyData.subjects_explored || 0,
+              subjects_growth: 0,
+              subjects_period: 'this week',
+              study_streak: legacyData.study_streak || 0
+            });
+          }
+        } else if (data) {
+          setStats(data);
+        }
+      } catch (err) {
+        console.error('Error in fetchStats:', err);
+      } finally {
+        setLoading(false);
       }
-      setLoading(false);
     };
 
     fetchStats();
   }, [user]);
+
+  const formatGrowth = (growth: number, period: string) => {
+    if (growth > 0) return `+${growth} ${period}`;
+    if (growth < 0) return `${growth} ${period}`;
+    return `No change ${period}`;
+  };
 
   const statCards = [
     { 
@@ -57,7 +89,8 @@ export default function ProfileStats() {
       icon: BookOpen, 
       bgClass: 'bg-[hsl(var(--stat-blue-bg))]',
       iconClass: 'text-[hsl(var(--stat-blue-icon))]',
-      change: '+2 this week'
+      change: formatGrowth(stats.resources_growth, stats.resources_period),
+      isPositive: stats.resources_growth >= 0
     },
     { 
       label: 'Quizzes Completed', 
@@ -65,7 +98,8 @@ export default function ProfileStats() {
       icon: Brain, 
       bgClass: 'bg-[hsl(var(--stat-green-bg))]',
       iconClass: 'text-[hsl(var(--stat-green-icon))]',
-      change: '+3 this month'
+      change: formatGrowth(stats.quizzes_growth, stats.quizzes_period),
+      isPositive: stats.quizzes_growth >= 0
     },
     { 
       label: 'Subjects Explored', 
@@ -73,7 +107,8 @@ export default function ProfileStats() {
       icon: Target, 
       bgClass: 'bg-[hsl(var(--stat-purple-bg))]',
       iconClass: 'text-[hsl(var(--stat-purple-icon))]',
-      change: '+1 this week'
+      change: formatGrowth(stats.subjects_growth, stats.subjects_period),
+      isPositive: stats.subjects_growth >= 0
     },
     { 
       label: 'Study Streak', 
@@ -81,7 +116,8 @@ export default function ProfileStats() {
       icon: TrendingUp, 
       bgClass: 'bg-[hsl(var(--stat-orange-bg))]',
       iconClass: 'text-[hsl(var(--stat-orange-icon))]',
-      change: 'Keep it up!'
+      change: stats.study_streak > 0 ? 'Keep it up!' : 'Start today!',
+      isPositive: true
     }
   ];
 
@@ -113,8 +149,8 @@ export default function ProfileStats() {
               <p className="text-2xl font-bold text-foreground">
                 {stat.value}
               </p>
-              <p className="text-xs text-primary mt-1">
-                ↑ {stat.change}
+              <p className={`text-xs mt-1 ${stat.isPositive ? 'text-primary' : 'text-destructive'}`}>
+                {stat.isPositive ? '↑' : '↓'} {stat.change}
               </p>
             </div>
             <div className={`w-10 h-10 rounded-xl flex items-center justify-center ${stat.bgClass}`}>
