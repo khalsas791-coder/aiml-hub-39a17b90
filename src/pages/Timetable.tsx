@@ -38,7 +38,7 @@ const cseAimlTimetable: DaySchedule[] = [
   {
     day: 'Monday',
     slots: [
-      { subject: 'DDCO / JAVA', teacher: 'KG / RP' },
+      { subject: 'DDCO / JAVA', teacher: 'KG / RP', type: 'lab' },
       null,
       null, // Tea Break
       { subject: 'DDCO', teacher: 'SM' },
@@ -80,7 +80,7 @@ const cseAimlTimetable: DaySchedule[] = [
   {
     day: 'Thursday',
     slots: [
-      { subject: 'DDCO / JAVA', teacher: 'KG / RP' },
+      { subject: 'DDCO / JAVA', teacher: 'KG / RP', type: 'lab' },
       null,
       null, // Tea Break
       { subject: 'M3', teacher: 'JM' },
@@ -102,14 +102,14 @@ const cseAimlTimetable: DaySchedule[] = [
       null, // Lunch
       { subject: 'M3', teacher: 'JM' },
       { subject: 'Git / OS', teacher: 'NS / NM', type: 'lab' },
-      { subject: 'Git / OS', teacher: 'NS / NM', type: 'lab' },
+      null,
     ],
   },
   {
     day: 'Saturday',
     slots: [
       { subject: 'Git / OS', teacher: 'NS / NM', type: 'lab' },
-      { subject: 'Git / OS', teacher: 'NS / NM', type: 'lab' },
+      null,
       null, // Tea Break
       null,
       null,
@@ -121,91 +121,31 @@ const cseAimlTimetable: DaySchedule[] = [
   },
 ];
 
-// AIML Branch Timetable
+// AIML Branch Timetable (Empty - To be updated)
 const aimlTimetable: DaySchedule[] = [
   {
     day: 'Monday',
-    slots: [
-      { subject: 'M3', teacher: 'JM' },
-      { subject: 'OS', teacher: 'DJ' },
-      null, // Tea Break
-      { subject: 'DDCO / JAVA LAB', teacher: 'SM / RP', type: 'lab' },
-      { subject: 'DDCO / JAVA LAB', teacher: 'SM / RP', type: 'lab' },
-      null, // Lunch
-      { subject: 'DSA', teacher: 'NK' },
-      { subject: 'JAVA', teacher: 'RP' },
-      { subject: 'DDCO', teacher: 'SM' },
-    ],
+    slots: [null, null, null, null, null, null, null, null, null],
   },
   {
     day: 'Tuesday',
-    slots: [
-      { subject: 'DSA', teacher: 'NK' },
-      { subject: 'JAVA', teacher: 'RP' },
-      null, // Tea Break
-      { subject: 'M3', teacher: 'JM' },
-      { subject: 'DDCO', teacher: 'SM' },
-      null, // Lunch
-      { subject: 'OS', teacher: 'DJ' },
-      { subject: 'SCR', teacher: 'KG' },
-      { subject: 'NSS', teacher: 'NM' },
-    ],
+    slots: [null, null, null, null, null, null, null, null, null],
   },
   {
     day: 'Wednesday',
-    slots: [
-      { subject: 'DDCO', teacher: 'SM' },
-      { subject: 'M3', teacher: 'JM' },
-      null, // Tea Break
-      { subject: 'JAVA', teacher: 'RP' },
-      { subject: 'DSA', teacher: 'NK' },
-      null, // Lunch
-      { subject: 'Git / OS LAB', teacher: 'NS / NM', type: 'lab' },
-      { subject: 'Git / OS LAB', teacher: 'NS / NM', type: 'lab' },
-      { subject: 'LIB', teacher: '' },
-    ],
+    slots: [null, null, null, null, null, null, null, null, null],
   },
   {
     day: 'Thursday',
-    slots: [
-      { subject: 'OS', teacher: 'DJ' },
-      { subject: 'DSA', teacher: 'NK' },
-      null, // Tea Break
-      { subject: 'DSA LAB', teacher: 'JKA / NK', type: 'lab' },
-      { subject: 'DSA LAB', teacher: 'JKA / NK', type: 'lab' },
-      null, // Lunch
-      { subject: 'M3', teacher: 'JM' },
-      { subject: 'JAVA', teacher: 'RP' },
-      { subject: 'DDCO', teacher: 'SM' },
-    ],
+    slots: [null, null, null, null, null, null, null, null, null],
   },
   {
     day: 'Friday',
-    slots: [
-      { subject: 'JAVA', teacher: 'RP' },
-      { subject: 'M3', teacher: 'JM' },
-      null, // Tea Break
-      { subject: 'DDCO', teacher: 'SM' },
-      { subject: 'OS', teacher: 'DJ' },
-      null, // Lunch
-      { subject: 'DSA', teacher: 'NK' },
-      { subject: 'SCR', teacher: 'KG' },
-      null,
-    ],
+    slots: [null, null, null, null, null, null, null, null, null],
   },
   {
     day: 'Saturday',
-    slots: [
-      { subject: 'NSS', teacher: 'NM' },
-      { subject: 'NSS', teacher: 'NM' },
-      null, // Tea Break
-      null,
-      null,
-      null, // Lunch
-      null,
-      null,
-      null,
-    ],
+    slots: [null, null, null, null, null, null, null, null, null],
   },
 ];
 
