@@ -1,7 +1,9 @@
+import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import NetworkBackground from '@/components/NetworkBackground';
 import ThemeToggle from '@/components/ThemeToggle';
 import UserProfileDropdown from '@/components/UserProfileDropdown';
@@ -31,7 +33,8 @@ const timeSlots = [
   '04:00 PM - 05:00 PM',
 ];
 
-const timetableData: DaySchedule[] = [
+// CSE(AIML) Branch Timetable
+const cseAimlTimetable: DaySchedule[] = [
   {
     day: 'Monday',
     slots: [
@@ -118,6 +121,94 @@ const timetableData: DaySchedule[] = [
   },
 ];
 
+// AIML Branch Timetable
+const aimlTimetable: DaySchedule[] = [
+  {
+    day: 'Monday',
+    slots: [
+      { subject: 'M3', teacher: 'JM' },
+      { subject: 'OS', teacher: 'DJ' },
+      null, // Tea Break
+      { subject: 'DDCO / JAVA LAB', teacher: 'SM / RP', type: 'lab' },
+      { subject: 'DDCO / JAVA LAB', teacher: 'SM / RP', type: 'lab' },
+      null, // Lunch
+      { subject: 'DSA', teacher: 'NK' },
+      { subject: 'JAVA', teacher: 'RP' },
+      { subject: 'DDCO', teacher: 'SM' },
+    ],
+  },
+  {
+    day: 'Tuesday',
+    slots: [
+      { subject: 'DSA', teacher: 'NK' },
+      { subject: 'JAVA', teacher: 'RP' },
+      null, // Tea Break
+      { subject: 'M3', teacher: 'JM' },
+      { subject: 'DDCO', teacher: 'SM' },
+      null, // Lunch
+      { subject: 'OS', teacher: 'DJ' },
+      { subject: 'SCR', teacher: 'KG' },
+      { subject: 'NSS', teacher: 'NM' },
+    ],
+  },
+  {
+    day: 'Wednesday',
+    slots: [
+      { subject: 'DDCO', teacher: 'SM' },
+      { subject: 'M3', teacher: 'JM' },
+      null, // Tea Break
+      { subject: 'JAVA', teacher: 'RP' },
+      { subject: 'DSA', teacher: 'NK' },
+      null, // Lunch
+      { subject: 'Git / OS LAB', teacher: 'NS / NM', type: 'lab' },
+      { subject: 'Git / OS LAB', teacher: 'NS / NM', type: 'lab' },
+      { subject: 'LIB', teacher: '' },
+    ],
+  },
+  {
+    day: 'Thursday',
+    slots: [
+      { subject: 'OS', teacher: 'DJ' },
+      { subject: 'DSA', teacher: 'NK' },
+      null, // Tea Break
+      { subject: 'DSA LAB', teacher: 'JKA / NK', type: 'lab' },
+      { subject: 'DSA LAB', teacher: 'JKA / NK', type: 'lab' },
+      null, // Lunch
+      { subject: 'M3', teacher: 'JM' },
+      { subject: 'JAVA', teacher: 'RP' },
+      { subject: 'DDCO', teacher: 'SM' },
+    ],
+  },
+  {
+    day: 'Friday',
+    slots: [
+      { subject: 'JAVA', teacher: 'RP' },
+      { subject: 'M3', teacher: 'JM' },
+      null, // Tea Break
+      { subject: 'DDCO', teacher: 'SM' },
+      { subject: 'OS', teacher: 'DJ' },
+      null, // Lunch
+      { subject: 'DSA', teacher: 'NK' },
+      { subject: 'SCR', teacher: 'KG' },
+      null,
+    ],
+  },
+  {
+    day: 'Saturday',
+    slots: [
+      { subject: 'NSS', teacher: 'NM' },
+      { subject: 'NSS', teacher: 'NM' },
+      null, // Tea Break
+      null,
+      null,
+      null, // Lunch
+      null,
+      null,
+      null,
+    ],
+  },
+];
+
 const getSlotStyle = (slot: ClassSlot | null, index: number) => {
   if (index === 2) return 'bg-amber-500/20 text-amber-600 dark:text-amber-400';
   if (index === 5) return 'bg-sky-500/20 text-sky-600 dark:text-sky-400';
@@ -126,8 +217,123 @@ const getSlotStyle = (slot: ClassSlot | null, index: number) => {
   return 'bg-primary/10 text-foreground';
 };
 
+const TimetableTable = ({ timetableData }: { timetableData: DaySchedule[] }) => (
+  <>
+    {/* Desktop Table View */}
+    <Card className="hidden lg:block border shadow-lg dark:border-0 dark:glass dark:glow-border mb-8">
+      <CardContent className="p-0">
+        <div className="overflow-x-auto">
+          <Table>
+            <TableHeader>
+              <TableRow className="bg-primary/10">
+                <TableHead className="font-bold text-foreground min-w-[100px]">
+                  <div className="flex items-center gap-2">
+                    <Clock className="w-4 h-4" />
+                    Time / Day
+                  </div>
+                </TableHead>
+                {timeSlots.map((time, index) => (
+                  <TableHead 
+                    key={index} 
+                    className={`text-center min-w-[120px] text-xs font-semibold ${
+                      index === 2 ? 'bg-amber-500/20 text-amber-600 dark:text-amber-400' : 
+                      index === 5 ? 'bg-sky-500/20 text-sky-600 dark:text-sky-400' : 
+                      'text-foreground'
+                    }`}
+                  >
+                    {index === 2 ? 'TEA BREAK' : index === 5 ? 'LUNCH' : time}
+                  </TableHead>
+                ))}
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {timetableData.map((dayData) => (
+                <TableRow key={dayData.day} className="hover:bg-muted/30">
+                  <TableCell className="font-bold text-primary bg-primary/5">
+                    {dayData.day.toUpperCase()}
+                  </TableCell>
+                  {dayData.slots.map((slot, index) => (
+                    <TableCell 
+                      key={index} 
+                      className={`text-center p-2 ${getSlotStyle(slot, index)}`}
+                    >
+                      {index === 2 ? (
+                        <span className="text-xs font-medium">Break</span>
+                      ) : index === 5 ? (
+                        <span className="text-xs font-medium">Lunch</span>
+                      ) : slot ? (
+                        <div className="flex flex-col gap-0.5">
+                          <span className="font-semibold text-xs">{slot.subject}</span>
+                          {slot.teacher && (
+                            <span className="text-[10px] opacity-70">{slot.teacher}</span>
+                          )}
+                        </div>
+                      ) : (
+                        <span className="text-xs">-</span>
+                      )}
+                    </TableCell>
+                  ))}
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </div>
+      </CardContent>
+    </Card>
+
+    {/* Mobile Card View */}
+    <div className="lg:hidden space-y-4">
+      {timetableData.map((dayData) => (
+        <Card key={dayData.day} className="border shadow-md dark:border-0 dark:glass">
+          <CardHeader className="pb-2 bg-primary/10">
+            <CardTitle className="text-lg text-primary">{dayData.day}</CardTitle>
+          </CardHeader>
+          <CardContent className="p-4 space-y-2">
+            {dayData.slots.map((slot, index) => {
+              if (index === 2) {
+                return (
+                  <div key={index} className="flex items-center justify-between p-2 rounded-lg bg-amber-500/20">
+                    <span className="text-xs text-muted-foreground">{timeSlots[index]}</span>
+                    <span className="text-xs font-medium text-amber-600 dark:text-amber-400">Tea Break</span>
+                  </div>
+                );
+              }
+              if (index === 5) {
+                return (
+                  <div key={index} className="flex items-center justify-between p-2 rounded-lg bg-sky-500/20">
+                    <span className="text-xs text-muted-foreground">{timeSlots[index]}</span>
+                    <span className="text-xs font-medium text-sky-600 dark:text-sky-400">Lunch Break</span>
+                  </div>
+                );
+              }
+              if (!slot) return null;
+              return (
+                <div 
+                  key={index} 
+                  className={`flex items-center justify-between p-3 rounded-lg ${
+                    slot.type === 'lab' ? 'bg-cyan-500/10' : 'bg-muted/50'
+                  }`}
+                >
+                  <div>
+                    <p className="font-semibold text-foreground text-sm">{slot.subject}</p>
+                    {slot.teacher && (
+                      <p className="text-xs text-muted-foreground">{slot.teacher}</p>
+                    )}
+                  </div>
+                  <span className="text-xs text-muted-foreground">{timeSlots[index]}</span>
+                </div>
+              );
+            })}
+          </CardContent>
+        </Card>
+      ))}
+    </div>
+  </>
+);
+
 export default function Timetable() {
   const navigate = useNavigate();
+  const [selectedBranch, setSelectedBranch] = useState<'cse-aiml' | 'aiml'>('cse-aiml');
 
   return (
     <div className="min-h-screen relative">
@@ -166,6 +372,14 @@ export default function Timetable() {
           </div>
         </div>
 
+        {/* Branch Selection Tabs */}
+        <Tabs value={selectedBranch} onValueChange={(v) => setSelectedBranch(v as 'cse-aiml' | 'aiml')} className="mb-6">
+          <TabsList className="grid w-full max-w-md grid-cols-2">
+            <TabsTrigger value="cse-aiml" className="font-semibold">CSE (AIML)</TabsTrigger>
+            <TabsTrigger value="aiml" className="font-semibold">AIML</TabsTrigger>
+          </TabsList>
+        </Tabs>
+
         {/* Legend */}
         <div className="flex flex-wrap gap-4 mb-6">
           <div className="flex items-center gap-2">
@@ -186,115 +400,8 @@ export default function Timetable() {
           </div>
         </div>
 
-        {/* Desktop Table View */}
-        <Card className="hidden lg:block border shadow-lg dark:border-0 dark:glass dark:glow-border mb-8">
-          <CardContent className="p-0">
-            <div className="overflow-x-auto">
-              <Table>
-                <TableHeader>
-                  <TableRow className="bg-primary/10">
-                    <TableHead className="font-bold text-foreground min-w-[100px]">
-                      <div className="flex items-center gap-2">
-                        <Clock className="w-4 h-4" />
-                        Time / Day
-                      </div>
-                    </TableHead>
-                    {timeSlots.map((time, index) => (
-                      <TableHead 
-                        key={index} 
-                        className={`text-center min-w-[120px] text-xs font-semibold ${
-                          index === 2 ? 'bg-amber-500/20 text-amber-600 dark:text-amber-400' : 
-                          index === 5 ? 'bg-sky-500/20 text-sky-600 dark:text-sky-400' : 
-                          'text-foreground'
-                        }`}
-                      >
-                        {index === 2 ? 'TEA BREAK' : index === 5 ? 'LUNCH' : time}
-                      </TableHead>
-                    ))}
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {timetableData.map((dayData) => (
-                    <TableRow key={dayData.day} className="hover:bg-muted/30">
-                      <TableCell className="font-bold text-primary bg-primary/5">
-                        {dayData.day.toUpperCase()}
-                      </TableCell>
-                      {dayData.slots.map((slot, index) => (
-                        <TableCell 
-                          key={index} 
-                          className={`text-center p-2 ${getSlotStyle(slot, index)}`}
-                        >
-                          {index === 2 ? (
-                            <span className="text-xs font-medium">Break</span>
-                          ) : index === 5 ? (
-                            <span className="text-xs font-medium">Lunch</span>
-                          ) : slot ? (
-                            <div className="flex flex-col gap-0.5">
-                              <span className="font-semibold text-xs">{slot.subject}</span>
-                              {slot.teacher && (
-                                <span className="text-[10px] opacity-70">{slot.teacher}</span>
-                              )}
-                            </div>
-                          ) : (
-                            <span className="text-xs">-</span>
-                          )}
-                        </TableCell>
-                      ))}
-                    </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
-            </div>
-          </CardContent>
-        </Card>
-
-        {/* Mobile Card View */}
-        <div className="lg:hidden space-y-4">
-          {timetableData.map((dayData) => (
-            <Card key={dayData.day} className="border shadow-md dark:border-0 dark:glass">
-              <CardHeader className="pb-2 bg-primary/10">
-                <CardTitle className="text-lg text-primary">{dayData.day}</CardTitle>
-              </CardHeader>
-              <CardContent className="p-4 space-y-2">
-                {dayData.slots.map((slot, index) => {
-                  if (index === 2) {
-                    return (
-                      <div key={index} className="flex items-center justify-between p-2 rounded-lg bg-amber-500/20">
-                        <span className="text-xs text-muted-foreground">{timeSlots[index]}</span>
-                        <span className="text-xs font-medium text-amber-600 dark:text-amber-400">Tea Break</span>
-                      </div>
-                    );
-                  }
-                  if (index === 5) {
-                    return (
-                      <div key={index} className="flex items-center justify-between p-2 rounded-lg bg-sky-500/20">
-                        <span className="text-xs text-muted-foreground">{timeSlots[index]}</span>
-                        <span className="text-xs font-medium text-sky-600 dark:text-sky-400">Lunch Break</span>
-                      </div>
-                    );
-                  }
-                  if (!slot) return null;
-                  return (
-                    <div 
-                      key={index} 
-                      className={`flex items-center justify-between p-3 rounded-lg ${
-                        slot.type === 'lab' ? 'bg-cyan-500/10' : 'bg-muted/50'
-                      }`}
-                    >
-                      <div>
-                        <p className="font-semibold text-foreground text-sm">{slot.subject}</p>
-                        {slot.teacher && (
-                          <p className="text-xs text-muted-foreground">{slot.teacher}</p>
-                        )}
-                      </div>
-                      <span className="text-xs text-muted-foreground">{timeSlots[index]}</span>
-                    </div>
-                  );
-                })}
-              </CardContent>
-            </Card>
-          ))}
-        </div>
+        {/* Timetable Display */}
+        <TimetableTable timetableData={selectedBranch === 'cse-aiml' ? cseAimlTimetable : aimlTimetable} />
 
         {/* Faculty Initials Legend */}
         <Card className="mt-8 border shadow-md dark:border-0 dark:glass">
@@ -308,13 +415,13 @@ export default function Timetable() {
               <div><span className="font-semibold text-primary">DDCOL / KG</span> - Mrs. Kaveri</div>
               <div><span className="font-semibold text-primary">OS / DJ</span> - Dr. Dayanand J</div>
               <div><span className="font-semibold text-primary">OSL / NM</span> - Ms. Namratha M</div>
-              <div><span className="font-semibold text-primary">DSA / SK</span> - Prof. Nasreen Kausar</div>
+              <div><span className="font-semibold text-primary">DSA / NK</span> - Prof. Nasreen Kausar</div>
               <div><span className="font-semibold text-primary">DSAL / JKA / NK</span> - Dr. Jasmineet Kaur Arora / Prof. Nasreen Kausar</div>
               <div><span className="font-semibold text-primary">JAVA / RP</span> - Prof. Rony Preetam</div>
               <div><span className="font-semibold text-primary">JAVAL / RP</span> - Prof. Rony Preetam</div>
-              <div><span className="font-semibold text-primary">SCR / NS</span> - Ms. Kaveri</div>
+              <div><span className="font-semibold text-primary">SCR / KG</span> - Mrs. Kaveri</div>
               <div><span className="font-semibold text-primary">Git / NS</span> - Prof. Netravati Sawale</div>
-              <div><span className="font-semibold text-primary">NSS / PE</span> - Prof. Rony Preetam / Ms. Namratha</div>
+              <div><span className="font-semibold text-primary">NSS / NM</span> - Ms. Namratha M</div>
               <div><span className="font-semibold text-primary">LIB</span> - Library</div>
             </div>
           </CardContent>
