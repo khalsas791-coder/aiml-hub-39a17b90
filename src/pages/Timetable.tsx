@@ -343,29 +343,31 @@ export default function Timetable() {
         {/* Timetable Display */}
         <TimetableTable timetableData={selectedBranch === 'cse-aiml' ? cseAimlTimetable : aimlTimetable} />
 
-        {/* Faculty Initials Legend */}
-        <Card className="mt-8 border shadow-md dark:border-0 dark:glass">
-          <CardHeader className="pb-2">
-            <CardTitle className="text-lg">Faculty Abbreviations</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3 text-sm">
-              <div><span className="font-semibold text-primary">M3 / JM</span> - Prof. Jyothi M</div>
-              <div><span className="font-semibold text-primary">DDCO / SM</span> - Prof. Soni M</div>
-              <div><span className="font-semibold text-primary">DDCOL / KG</span> - Mrs. Kaveri</div>
-              <div><span className="font-semibold text-primary">OS / DJ</span> - Dr. Dayanand J</div>
-              <div><span className="font-semibold text-primary">OSL / NM</span> - Ms. Namratha M</div>
-              <div><span className="font-semibold text-primary">DSA / NK</span> - Prof. Nasreen Kausar</div>
-              <div><span className="font-semibold text-primary">DSAL / JKA / NK</span> - Dr. Jasmineet Kaur Arora / Prof. Nasreen Kausar</div>
-              <div><span className="font-semibold text-primary">JAVA / RP</span> - Prof. Rony Preetam</div>
-              <div><span className="font-semibold text-primary">JAVAL / RP</span> - Prof. Rony Preetam</div>
-              <div><span className="font-semibold text-primary">SCR / KG</span> - Mrs. Kaveri</div>
-              <div><span className="font-semibold text-primary">Git / NS</span> - Prof. Netravati Sawale</div>
-              <div><span className="font-semibold text-primary">NSS / NM</span> - Ms. Namratha M</div>
-              <div><span className="font-semibold text-primary">LIB</span> - Library</div>
-            </div>
-          </CardContent>
-        </Card>
+        {/* Faculty Initials Legend - Only show for CSE(AIML) */}
+        {selectedBranch === 'cse-aiml' && (
+          <Card className="mt-8 border shadow-md dark:border-0 dark:glass">
+            <CardHeader className="pb-2">
+              <CardTitle className="text-lg">Faculty Abbreviations</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3 text-sm">
+                <div><span className="font-semibold text-primary">M3 / JM</span> - Prof. Jyothi M</div>
+                <div><span className="font-semibold text-primary">DDCO / SM</span> - Prof. Soni M</div>
+                <div><span className="font-semibold text-primary">DDCOL / KG</span> - Mrs. Kaveri</div>
+                <div><span className="font-semibold text-primary">OS / DJ</span> - Dr. Dayanand J</div>
+                <div><span className="font-semibold text-primary">OSL / NM</span> - Ms. Namratha M</div>
+                <div><span className="font-semibold text-primary">DSA / NK</span> - Prof. Nasreen Kausar</div>
+                <div><span className="font-semibold text-primary">DSAL / JKA / NK</span> - Dr. Jasmineet Kaur Arora / Prof. Nasreen Kausar</div>
+                <div><span className="font-semibold text-primary">JAVA / RP</span> - Prof. Rony Preetam</div>
+                <div><span className="font-semibold text-primary">JAVAL / RP</span> - Prof. Rony Preetam</div>
+                <div><span className="font-semibold text-primary">SCR / KG</span> - Mrs. Kaveri</div>
+                <div><span className="font-semibold text-primary">Git / NS</span> - Prof. Netravati Sawale</div>
+                <div><span className="font-semibold text-primary">NSS / NM</span> - Ms. Namratha M</div>
+                <div><span className="font-semibold text-primary">LIB</span> - Library</div>
+              </div>
+            </CardContent>
+          </Card>
+        )}
       </main>
     </div>
   );
