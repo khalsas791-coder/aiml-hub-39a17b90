@@ -25,7 +25,8 @@ import {
   FlaskConical,
   BarChart3,
   FolderOpen,
-  Shield
+  Shield,
+  Loader2
 } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { toast } from 'sonner';
@@ -89,15 +90,16 @@ const subjects3rdSem: SubjectData[] = [
 ];
 
 export default function Dashboard() {
-  const { user, role, signOut } = useAuth();
+  const { user, role, signOut, loading: authLoading } = useAuth();
   const navigate = useNavigate();
   const [resourceCounts, setResourceCounts] = useState<Record<string, number>>({});
   const [isTeacher, setIsTeacher] = useState(false);
 
   useEffect(() => {
+    if (authLoading || !user) return;
     fetchResourceCounts();
     fetchProfile();
-  }, [user]);
+  }, [user, authLoading]);
 
   const fetchProfile = async () => {
     if (!user) return;
@@ -160,6 +162,18 @@ export default function Dashboard() {
                       user?.user_metadata?.usn || 
                       user?.email?.split('@')[0] || 
                       'User';
+
+  // Show loading state while auth is being restored
+  if (authLoading) {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <div className="flex flex-col items-center gap-4">
+          <Loader2 className="w-10 h-10 animate-spin text-primary" />
+          <p className="text-muted-foreground text-sm">Loading...</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen relative">
