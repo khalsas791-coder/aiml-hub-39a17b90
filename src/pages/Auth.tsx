@@ -11,7 +11,7 @@ import { Switch } from '@/components/ui/switch';
 import { GraduationCap, Shield, Loader2, ArrowLeft, Mail, Users, Eye, EyeOff } from 'lucide-react';
 import { toast } from 'sonner';
 import { z } from 'zod';
-import { validateName } from '@/lib/profanityFilter';
+import { validateName, validateUSN, containsProfanity } from '@/lib/profanityFilter';
 import aimlLogo from '@/assets/aiml-logo-new.png';
 
 // Floating bubble component for animation
@@ -116,6 +116,24 @@ export default function Auth() {
         
         if (!studentForm.name.trim()) {
           toast.error('Full name is required');
+          setIsLoading(false);
+          return;
+        }
+
+        // Validate USN for profanity (if not a teacher)
+        if (!isTeacher && studentForm.usn) {
+          const usnValidation = validateUSN(studentForm.usn);
+          if (!usnValidation.valid) {
+            toast.error(usnValidation.message);
+            setIsLoading(false);
+            return;
+          }
+        }
+
+        // Check email for profanity (the local part before @)
+        const emailLocalPart = studentForm.email.split('@')[0];
+        if (containsProfanity(emailLocalPart)) {
+          toast.error('Please use an appropriate email address');
           setIsLoading(false);
           return;
         }

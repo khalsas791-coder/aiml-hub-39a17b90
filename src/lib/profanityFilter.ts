@@ -64,3 +64,25 @@ export function validateName(name: string): { valid: boolean; message?: string }
   
   return { valid: true };
 }
+
+export function validateUSN(usn: string): { valid: boolean; message?: string } {
+  if (!usn || usn.trim().length === 0) {
+    return { valid: true }; // USN is optional
+  }
+  
+  if (usn.trim().length > 20) {
+    return { valid: false, message: 'USN must be less than 20 characters' };
+  }
+  
+  if (containsProfanity(usn)) {
+    return { valid: false, message: 'Please enter a valid USN' };
+  }
+  
+  // Check for valid USN format (alphanumeric only)
+  const validUSNRegex = /^[a-zA-Z0-9]+$/;
+  if (!validUSNRegex.test(usn.trim())) {
+    return { valid: false, message: 'USN can only contain letters and numbers' };
+  }
+  
+  return { valid: true };
+}
