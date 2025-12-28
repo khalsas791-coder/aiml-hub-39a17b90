@@ -18,7 +18,7 @@ interface DashboardStats {
 }
 
 export default function ProfileStats() {
-  const { user } = useAuth();
+  const { user, loading: authLoading } = useAuth();
   const [stats, setStats] = useState<DashboardStats>({
     resources_viewed: 0,
     resources_growth: 0,
@@ -34,7 +34,12 @@ export default function ProfileStats() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    if (!user) return;
+    // Wait for auth to finish loading before attempting to fetch
+    if (authLoading) return;
+    if (!user) {
+      setLoading(false);
+      return;
+    }
 
     const fetchStats = async () => {
       try {
@@ -87,7 +92,7 @@ export default function ProfileStats() {
     };
 
     fetchStats();
-  }, [user]);
+  }, [user, authLoading]);
 
   const formatGrowth = (growth: number, period: string) => {
     if (growth > 0) return `+${growth} ${period}`;
