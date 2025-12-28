@@ -38,7 +38,20 @@ export default function ProfileStats() {
 
     const fetchStats = async () => {
       try {
-        const { data, error } = await supabase.functions.invoke('dashboard-stats');
+        // Get the current session to ensure we have a valid token
+        const { data: sessionData } = await supabase.auth.getSession();
+        
+        if (!sessionData.session) {
+          console.error('No active session found');
+          setLoading(false);
+          return;
+        }
+
+        const { data, error } = await supabase.functions.invoke('dashboard-stats', {
+          headers: {
+            Authorization: `Bearer ${sessionData.session.access_token}`
+          }
+        });
         
         if (error) {
           console.error('Error fetching dashboard stats:', error);
