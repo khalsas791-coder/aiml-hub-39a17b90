@@ -43,21 +43,9 @@ export default function ProfileStats() {
 
     const fetchStats = async () => {
       try {
-        // Get the current session to ensure we have a valid token
-        const { data: sessionData } = await supabase.auth.getSession();
-        
-        if (!sessionData.session) {
-          console.error('No active session found');
-          setLoading(false);
-          return;
-        }
+        // Call backend function; client will attach the latest auth token automatically
+        const { data, error } = await supabase.functions.invoke('dashboard-stats');
 
-        const { data, error } = await supabase.functions.invoke('dashboard-stats', {
-          headers: {
-            Authorization: `Bearer ${sessionData.session.access_token}`
-          }
-        });
-        
         if (error) {
           console.error('Error fetching dashboard stats:', error);
           // Fallback to legacy user_stats
@@ -66,7 +54,7 @@ export default function ProfileStats() {
             .select('*')
             .eq('user_id', user.id)
             .maybeSingle();
-          
+
           if (legacyData) {
             setStats({
               resources_viewed: legacyData.resources_viewed || 0,
@@ -82,7 +70,7 @@ export default function ProfileStats() {
             });
           }
         } else if (data) {
-          setStats(data);
+          setStats(data as DashboardStats);
         }
       } catch (err) {
         console.error('Error in fetchStats:', err);
