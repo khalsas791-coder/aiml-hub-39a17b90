@@ -5,6 +5,24 @@ const corsHeaders = {
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 };
 
+const decodeBase64Url = (input: string) => {
+  const normalized = input.replace(/-/g, '+').replace(/_/g, '/');
+  const padded = normalized.padEnd(Math.ceil(normalized.length / 4) * 4, '=');
+  return atob(padded);
+};
+
+const getUserIdFromJwt = (token: string): string | null => {
+  try {
+    const [, payload] = token.split('.');
+    if (!payload) return null;
+    const json = decodeBase64Url(payload);
+    const parsed = JSON.parse(json);
+    return typeof parsed?.sub === 'string' ? parsed.sub : null;
+  } catch {
+    return null;
+  }
+};
+
 interface DashboardStats {
   resources_viewed: number;
   resources_growth: number;
@@ -43,25 +61,23 @@ Deno.serve(async (req) => {
       );
     }
 
-    const supabase = createClient(
-      Deno.env.get('SUPABASE_URL') ?? '',
-      Deno.env.get('SUPABASE_ANON_KEY') ?? '',
-      { global: { headers: { Authorization: `Bearer ${jwt}` } } }
-    );
-
-    // Get the authenticated user (use JWT directly in Edge Functions)
-    const { data: { user }, error: userError } = await supabase.auth.getUser(jwt);
-    if (userError || !user) {
-      console.error('User authentication failed:', userError);
+    const userId = getUserIdFromJwt(jwt);
+    if (!userId) {
+      console.error('Could not read user id from JWT');
       return new Response(
         JSON.stringify({ error: 'Unauthorized' }),
         { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       );
     }
 
-    const userId = user.id;
+    const supabase = createClient(
+      Deno.env.get('SUPABASE_URL') ?? '',
+      Deno.env.get('SUPABASE_ANON_KEY') ?? '',
+      { global: { headers: { Authorization: `Bearer ${jwt}` } } }
+    );
+
     const now = new Date();
-    
+
     console.log(`Fetching dashboard stats for user: ${userId}`);
 
     // Calculate date boundaries
