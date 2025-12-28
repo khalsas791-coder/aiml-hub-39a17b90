@@ -25,7 +25,7 @@ Deno.serve(async (req) => {
   }
 
   try {
-    const authHeader = req.headers.get('Authorization');
+    const authHeader = req.headers.get('Authorization') || req.headers.get('authorization');
     if (!authHeader) {
       console.error('No authorization header provided');
       return new Response(
@@ -34,14 +34,23 @@ Deno.serve(async (req) => {
       );
     }
 
+    const jwt = authHeader.replace(/^Bearer\s+/i, '').trim();
+    if (!jwt) {
+      console.error('Authorization header present but JWT missing');
+      return new Response(
+        JSON.stringify({ error: 'Unauthorized' }),
+        { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
+
     const supabase = createClient(
       Deno.env.get('SUPABASE_URL') ?? '',
       Deno.env.get('SUPABASE_ANON_KEY') ?? '',
-      { global: { headers: { Authorization: authHeader } } }
+      { global: { headers: { Authorization: `Bearer ${jwt}` } } }
     );
 
-    // Get the authenticated user
-    const { data: { user }, error: userError } = await supabase.auth.getUser();
+    // Get the authenticated user (use JWT directly in Edge Functions)
+    const { data: { user }, error: userError } = await supabase.auth.getUser(jwt);
     if (userError || !user) {
       console.error('User authentication failed:', userError);
       return new Response(
