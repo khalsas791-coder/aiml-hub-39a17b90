@@ -32,16 +32,8 @@ export function containsProfanity(text: string): boolean {
   // Normalize the text
   const normalized = normalizeLeetspeak(text.toLowerCase().trim());
   
-  // Remove spaces and special characters for checking
-  const cleaned = normalized.replace(/[^a-z0-9]/gi, '');
-  
-  // Check each profanity word
+  // Only check with word boundaries to avoid false positives on names like "Mudasser"
   for (const word of PROFANITY_LIST) {
-    // Check if the cleaned text contains the profanity
-    if (cleaned.includes(word)) {
-      return true;
-    }
-    // Also check the original normalized text with word boundaries
     const regex = new RegExp(`\\b${word}\\b`, 'i');
     if (regex.test(normalized)) {
       return true;
