@@ -6,14 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { 
-  Table, 
-  TableBody, 
-  TableCell, 
-  TableHead, 
-  TableHeader, 
-  TableRow 
-} from '@/components/ui/table';
+import { Badge } from '@/components/ui/badge';
 import { 
   Dialog,
   DialogContent,
@@ -23,9 +16,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from '@/components/ui/dialog';
-import { Badge } from '@/components/ui/badge';
 import { 
-  ArrowLeft, 
   Shield, 
   Users, 
   UserPlus, 
@@ -33,10 +24,10 @@ import {
   AlertCircle,
   Loader2,
   Search,
-  RefreshCw
+  AlertTriangle,
+  GraduationCap
 } from 'lucide-react';
 import { toast } from 'sonner';
-import appLogo from '@/assets/app-logo.png';
 
 interface UserRole {
   id: string;
@@ -62,6 +53,7 @@ export default function AdminPanel() {
   const [newUserId, setNewUserId] = useState('');
   const [newRole, setNewRole] = useState<'admin' | 'student'>('student');
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [updatingRoleId, setUpdatingRoleId] = useState<string | null>(null);
 
   // Check if user is admin
   if (role !== 'admin') {
@@ -92,7 +84,6 @@ export default function AdminPanel() {
   const fetchUserRoles = async () => {
     setIsLoading(true);
     try {
-      // Fetch all user roles
       const { data: rolesData, error: rolesError } = await supabase
         .from('user_roles')
         .select('*')
@@ -102,7 +93,6 @@ export default function AdminPanel() {
 
       setUserRoles(rolesData || []);
 
-      // Fetch profiles for all users with roles
       if (rolesData && rolesData.length > 0) {
         const userIds = [...new Set(rolesData.map(r => r.user_id))];
         const { data: profilesData, error: profilesError } = await supabase
@@ -161,7 +151,6 @@ export default function AdminPanel() {
   };
 
   const handleDeleteRole = async (roleId: string, userId: string) => {
-    // Prevent deleting own admin role
     if (userId === user?.id) {
       toast.error("You cannot remove your own admin role");
       return;
@@ -183,6 +172,31 @@ export default function AdminPanel() {
     }
   };
 
+  const handleRoleChange = async (roleId: string, userId: string, newRoleValue: 'admin' | 'student') => {
+    if (userId === user?.id) {
+      toast.error("You cannot change your own role");
+      return;
+    }
+
+    setUpdatingRoleId(roleId);
+    try {
+      const { error } = await supabase
+        .from('user_roles')
+        .update({ role: newRoleValue })
+        .eq('id', roleId);
+
+      if (error) throw error;
+
+      toast.success(`Role updated to "${newRoleValue}"`);
+      fetchUserRoles();
+    } catch (error) {
+      console.error('Error updating role:', error);
+      toast.error('Failed to update role');
+    } finally {
+      setUpdatingRoleId(null);
+    }
+  };
+
   const filteredRoles = userRoles.filter(r => {
     const profile = profiles[r.user_id];
     const searchLower = searchTerm.toLowerCase();
@@ -194,130 +208,151 @@ export default function AdminPanel() {
     );
   });
 
+  const totalUsers = userRoles.length;
+  const adminCount = userRoles.filter(r => r.role === 'admin').length;
+  const studentCount = userRoles.filter(r => r.role === 'student').length;
+
   return (
     <div className="min-h-screen bg-background">
-      {/* Header */}
-      <header className="sticky top-0 z-50 bg-background/80 backdrop-blur-xl border-b border-border/50">
-        <div className="container flex items-center h-16 px-4 gap-4">
-          <img src={appLogo} alt="AIML Logo" className="w-10 h-10 object-contain" />
-          <Button 
-            variant="ghost" 
-            size="icon"
-            onClick={() => navigate('/dashboard')}
-            className="rounded-full"
-          >
-            <ArrowLeft className="w-5 h-5" />
-          </Button>
-          <div className="flex-1">
-            <h1 className="text-lg font-semibold text-foreground">Admin Panel</h1>
+      {/* Main Content */}
+      <main className="container px-4 py-6 max-w-lg mx-auto space-y-6">
+        {/* Header */}
+        <div className="flex items-center gap-4 animate-fade-in">
+          <div className="w-12 h-12 rounded-xl bg-primary/10 border border-primary/30 flex items-center justify-center">
+            <Shield className="w-6 h-6 text-primary" />
+          </div>
+          <div>
+            <h1 className="text-2xl font-bold text-foreground">Admin Panel</h1>
             <p className="text-sm text-muted-foreground">Manage user roles and permissions</p>
           </div>
         </div>
-      </header>
 
-      {/* Main Content */}
-      <main className="container px-4 py-8 max-w-4xl mx-auto">
-        <Card className="border-0 shadow-elevated animate-slide-up">
-          <CardHeader>
+        {/* Stats Cards */}
+        <div className="space-y-3 animate-slide-up">
+          {/* Total Users */}
+          <Card className="border border-primary/20 bg-card/50 backdrop-blur-sm">
+            <CardContent className="p-4 flex items-center gap-4">
+              <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center">
+                <Users className="w-6 h-6 text-primary" />
+              </div>
+              <div>
+                <p className="text-3xl font-bold text-foreground">{totalUsers}</p>
+                <p className="text-sm text-muted-foreground">Total Users</p>
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Admins */}
+          <Card className="border border-primary/20 bg-card/50 backdrop-blur-sm">
+            <CardContent className="p-4 flex items-center gap-4">
+              <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center">
+                <Shield className="w-6 h-6 text-primary" />
+              </div>
+              <div>
+                <p className="text-3xl font-bold text-foreground">{adminCount}</p>
+                <p className="text-sm text-muted-foreground">Admins</p>
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Students */}
+          <Card className="border border-primary/20 bg-card/50 backdrop-blur-sm">
+            <CardContent className="p-4 flex items-center gap-4">
+              <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center">
+                <GraduationCap className="w-6 h-6 text-primary" />
+              </div>
+              <div>
+                <p className="text-3xl font-bold text-foreground">{studentCount}</p>
+                <p className="text-sm text-muted-foreground">Students</p>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+
+        {/* User Management Section */}
+        <Card className="border border-primary/20 bg-card/50 backdrop-blur-sm animate-slide-up">
+          <CardHeader className="pb-4">
             <div className="flex items-center justify-between">
-              <div className="flex items-center gap-3">
-                <div className="w-12 h-12 gradient-primary rounded-xl flex items-center justify-center">
-                  <Shield className="w-6 h-6 text-primary-foreground" />
-                </div>
-                <div>
-                  <CardTitle>User Roles</CardTitle>
-                  <CardDescription>
-                    Manage admin and student roles
-                  </CardDescription>
-                </div>
+              <div>
+                <CardTitle className="text-xl">User Management</CardTitle>
+                <CardDescription>View and manage user roles</CardDescription>
               </div>
-              <div className="flex items-center gap-2">
-                <Button 
-                  variant="outline" 
-                  size="icon"
-                  onClick={fetchUserRoles}
-                  className="rounded-full"
-                >
-                  <RefreshCw className="w-4 h-4" />
-                </Button>
-                <Dialog open={isAddDialogOpen} onOpenChange={setIsAddDialogOpen}>
-                  <DialogTrigger asChild>
-                    <Button variant="hero" className="gap-2 rounded-xl">
-                      <UserPlus className="w-4 h-4" />
-                      Add Role
-                    </Button>
-                  </DialogTrigger>
-                  <DialogContent>
-                    <DialogHeader>
-                      <DialogTitle>Add User Role</DialogTitle>
-                      <DialogDescription>
-                        Assign a role to a user by their user ID
-                      </DialogDescription>
-                    </DialogHeader>
-                    <div className="space-y-4 py-4">
-                      <div className="space-y-2">
-                        <label className="text-sm font-medium text-foreground">User ID (UUID)</label>
-                        <Input
-                          placeholder="e.g., 123e4567-e89b-12d3-a456-426614174000"
-                          value={newUserId}
-                          onChange={(e) => setNewUserId(e.target.value)}
-                          className="h-11 rounded-xl"
-                        />
-                        <p className="text-xs text-muted-foreground">
-                          You can find user IDs in the profiles table in your backend
-                        </p>
-                      </div>
-                      <div className="space-y-2">
-                        <label className="text-sm font-medium text-foreground">Role</label>
-                        <Select value={newRole} onValueChange={(v: 'admin' | 'student') => setNewRole(v)}>
-                          <SelectTrigger className="h-11 rounded-xl">
-                            <SelectValue />
-                          </SelectTrigger>
-                          <SelectContent>
-                            <SelectItem value="student">Student</SelectItem>
-                            <SelectItem value="admin">Admin</SelectItem>
-                          </SelectContent>
-                        </Select>
-                      </div>
+              <Dialog open={isAddDialogOpen} onOpenChange={setIsAddDialogOpen}>
+                <DialogTrigger asChild>
+                  <Button variant="outline" size="sm" className="gap-2 rounded-xl border-primary/30">
+                    <UserPlus className="w-4 h-4" />
+                    Add
+                  </Button>
+                </DialogTrigger>
+                <DialogContent>
+                  <DialogHeader>
+                    <DialogTitle>Add User Role</DialogTitle>
+                    <DialogDescription>
+                      Assign a role to a user by their user ID
+                    </DialogDescription>
+                  </DialogHeader>
+                  <div className="space-y-4 py-4">
+                    <div className="space-y-2">
+                      <label className="text-sm font-medium text-foreground">User ID (UUID)</label>
+                      <Input
+                        placeholder="e.g., 123e4567-e89b-12d3-a456-426614174000"
+                        value={newUserId}
+                        onChange={(e) => setNewUserId(e.target.value)}
+                        className="h-11 rounded-xl"
+                      />
+                      <p className="text-xs text-muted-foreground">
+                        You can find user IDs in the profiles table in your backend
+                      </p>
                     </div>
-                    <DialogFooter>
-                      <Button variant="outline" onClick={() => setIsAddDialogOpen(false)} className="rounded-xl">
-                        Cancel
-                      </Button>
-                      <Button 
-                        variant="hero" 
-                        onClick={handleAddRole} 
-                        disabled={isSubmitting}
-                        className="rounded-xl"
-                      >
-                        {isSubmitting ? (
-                          <>
-                            <Loader2 className="w-4 h-4 animate-spin" />
-                            Adding...
-                          </>
-                        ) : (
-                          'Add Role'
-                        )}
-                      </Button>
-                    </DialogFooter>
-                  </DialogContent>
-                </Dialog>
-              </div>
+                    <div className="space-y-2">
+                      <label className="text-sm font-medium text-foreground">Role</label>
+                      <Select value={newRole} onValueChange={(v: 'admin' | 'student') => setNewRole(v)}>
+                        <SelectTrigger className="h-11 rounded-xl">
+                          <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="student">Student</SelectItem>
+                          <SelectItem value="admin">Admin</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+                  </div>
+                  <DialogFooter>
+                    <Button variant="outline" onClick={() => setIsAddDialogOpen(false)} className="rounded-xl">
+                      Cancel
+                    </Button>
+                    <Button 
+                      onClick={handleAddRole} 
+                      disabled={isSubmitting}
+                      className="rounded-xl"
+                    >
+                      {isSubmitting ? (
+                        <>
+                          <Loader2 className="w-4 h-4 animate-spin mr-2" />
+                          Adding...
+                        </>
+                      ) : (
+                        'Add Role'
+                      )}
+                    </Button>
+                  </DialogFooter>
+                </DialogContent>
+              </Dialog>
             </div>
           </CardHeader>
-          <CardContent>
+          <CardContent className="space-y-4">
             {/* Search */}
-            <div className="relative mb-6">
+            <div className="relative">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
               <Input
-                placeholder="Search by name, USN, or user ID..."
+                placeholder="Search by name, email, or USN..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="pl-10 h-11 rounded-xl"
+                className="pl-10 h-11 rounded-xl bg-secondary/50 border-border/50"
               />
             </div>
 
-            {/* Table */}
+            {/* User List */}
             {isLoading ? (
               <div className="flex items-center justify-center py-12">
                 <Loader2 className="w-8 h-8 animate-spin text-primary" />
@@ -325,67 +360,91 @@ export default function AdminPanel() {
             ) : filteredRoles.length === 0 ? (
               <div className="text-center py-12">
                 <Users className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
-                <h3 className="text-lg font-semibold text-foreground mb-2">No roles found</h3>
+                <h3 className="text-lg font-semibold text-foreground mb-2">No users found</h3>
                 <p className="text-muted-foreground text-sm">
-                  {searchTerm ? 'Try a different search term' : 'Add a role to get started'}
+                  {searchTerm ? 'Try a different search term' : 'Add a user to get started'}
                 </p>
               </div>
             ) : (
-              <div className="rounded-xl border border-border overflow-hidden">
-                <Table>
-                  <TableHeader>
-                    <TableRow className="bg-secondary/50">
-                      <TableHead>User</TableHead>
-                      <TableHead>Role</TableHead>
-                      <TableHead>User ID</TableHead>
-                      <TableHead className="text-right">Actions</TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {filteredRoles.map((roleItem) => {
-                      const profile = profiles[roleItem.user_id];
-                      return (
-                        <TableRow key={roleItem.id}>
-                          <TableCell>
-                            <div>
-                              <p className="font-medium text-foreground">
-                                {profile?.full_name || 'Unknown User'}
-                              </p>
-                              {profile?.usn && (
-                                <p className="text-sm text-muted-foreground">{profile.usn}</p>
-                              )}
-                            </div>
-                          </TableCell>
-                          <TableCell>
-                            <Badge 
-                              variant={roleItem.role === 'admin' ? 'default' : 'secondary'}
-                              className="capitalize"
-                            >
-                              {roleItem.role === 'admin' && <Shield className="w-3 h-3 mr-1" />}
-                              {roleItem.role}
+              <div className="space-y-1">
+                {/* Table Header */}
+                <div className="grid grid-cols-3 gap-4 px-3 py-2 text-sm text-muted-foreground font-medium">
+                  <span>Name</span>
+                  <span className="text-center">Role</span>
+                  <span className="text-right">Actions</span>
+                </div>
+
+                {/* User Rows */}
+                <div className="space-y-2">
+                  {filteredRoles.map((roleItem) => {
+                    const profile = profiles[roleItem.user_id];
+                    const isCurrentUser = roleItem.user_id === user?.id;
+                    
+                    return (
+                      <div 
+                        key={roleItem.id} 
+                        className="grid grid-cols-3 gap-4 items-center px-3 py-3 rounded-xl bg-secondary/30 border border-border/30"
+                      >
+                        {/* Name Column */}
+                        <div className="flex items-center gap-2 min-w-0">
+                          <span className="font-medium text-foreground truncate">
+                            {profile?.full_name || 'Unknown'}
+                          </span>
+                          {isCurrentUser && (
+                            <Badge variant="outline" className="text-xs shrink-0 border-muted-foreground/50">
+                              You
                             </Badge>
-                          </TableCell>
-                          <TableCell>
-                            <code className="text-xs bg-secondary px-2 py-1 rounded">
-                              {roleItem.user_id.slice(0, 8)}...
-                            </code>
-                          </TableCell>
-                          <TableCell className="text-right">
+                          )}
+                        </div>
+
+                        {/* Role Column */}
+                        <div className="flex items-center justify-center gap-1">
+                          {isCurrentUser ? (
+                            <div className="flex items-center gap-1">
+                              <Badge 
+                                variant="outline" 
+                                className="text-xs border-primary/50 text-primary"
+                              >
+                                {roleItem.role}
+                              </Badge>
+                              <AlertTriangle className="w-4 h-4 text-amber-500" />
+                            </div>
+                          ) : (
+                            <Select 
+                              value={roleItem.role} 
+                              onValueChange={(v: 'admin' | 'student') => handleRoleChange(roleItem.id, roleItem.user_id, v)}
+                              disabled={updatingRoleId === roleItem.id}
+                            >
+                              <SelectTrigger className="h-8 w-[100px] text-xs rounded-lg bg-secondary/50 border-border/50">
+                                <SelectValue />
+                              </SelectTrigger>
+                              <SelectContent>
+                                <SelectItem value="student">student</SelectItem>
+                                <SelectItem value="admin">admin</SelectItem>
+                              </SelectContent>
+                            </Select>
+                          )}
+                        </div>
+
+                        {/* Actions Column */}
+                        <div className="flex justify-end">
+                          {isCurrentUser ? (
+                            <span className="text-muted-foreground">—</span>
+                          ) : (
                             <Button
                               variant="ghost"
                               size="icon"
                               onClick={() => handleDeleteRole(roleItem.id, roleItem.user_id)}
-                              disabled={roleItem.user_id === user?.id}
-                              className="text-destructive hover:text-destructive hover:bg-destructive/10 rounded-full"
+                              className="h-8 w-8 text-destructive hover:text-destructive hover:bg-destructive/10 rounded-lg"
                             >
                               <Trash2 className="w-4 h-4" />
                             </Button>
-                          </TableCell>
-                        </TableRow>
-                      );
-                    })}
-                  </TableBody>
-                </Table>
+                          )}
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
               </div>
             )}
           </CardContent>
