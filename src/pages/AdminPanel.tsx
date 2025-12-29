@@ -40,6 +40,7 @@ interface Profile {
   user_id: string;
   full_name: string | null;
   usn: string | null;
+  email: string | null;
 }
 
 export default function AdminPanel() {
@@ -97,7 +98,7 @@ export default function AdminPanel() {
         const userIds = [...new Set(rolesData.map(r => r.user_id))];
         const { data: profilesData, error: profilesError } = await supabase
           .from('profiles')
-          .select('user_id, full_name, usn')
+          .select('user_id, full_name, usn, email')
           .in('user_id', userIds);
 
         if (profilesError) throw profilesError;
@@ -204,7 +205,8 @@ export default function AdminPanel() {
       r.user_id.toLowerCase().includes(searchLower) ||
       r.role.toLowerCase().includes(searchLower) ||
       profile?.full_name?.toLowerCase().includes(searchLower) ||
-      profile?.usn?.toLowerCase().includes(searchLower)
+      profile?.usn?.toLowerCase().includes(searchLower) ||
+      profile?.email?.toLowerCase().includes(searchLower)
     );
   });
 
