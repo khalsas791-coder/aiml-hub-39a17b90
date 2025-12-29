@@ -56,32 +56,6 @@ export default function AdminPanel() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [updatingRoleId, setUpdatingRoleId] = useState<string | null>(null);
 
-  // Check if user is admin
-  if (role !== 'admin') {
-    return (
-      <div className="min-h-screen bg-background flex items-center justify-center p-6">
-        <Card className="max-w-md w-full border-0 shadow-elevated">
-          <CardContent className="p-8 text-center">
-            <div className="w-16 h-16 bg-destructive/10 rounded-2xl flex items-center justify-center mx-auto mb-4">
-              <AlertCircle className="w-8 h-8 text-destructive" />
-            </div>
-            <h2 className="text-xl font-bold text-foreground mb-2">Access Denied</h2>
-            <p className="text-muted-foreground mb-6">
-              You don't have permission to access this page. Only admins can manage user roles.
-            </p>
-            <Button onClick={() => navigate('/dashboard')} className="rounded-xl">
-              Back to Dashboard
-            </Button>
-          </CardContent>
-        </Card>
-      </div>
-    );
-  }
-
-  useEffect(() => {
-    fetchUserRoles();
-  }, []);
-
   const fetchUserRoles = async () => {
     setIsLoading(true);
     try {
@@ -116,6 +90,34 @@ export default function AdminPanel() {
       setIsLoading(false);
     }
   };
+
+  useEffect(() => {
+    if (role === 'admin') {
+      fetchUserRoles();
+    }
+  }, [role]);
+
+  // Check if user is admin - moved after all hooks
+  if (role !== 'admin') {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center p-6">
+        <Card className="max-w-md w-full border-0 shadow-elevated">
+          <CardContent className="p-8 text-center">
+            <div className="w-16 h-16 bg-destructive/10 rounded-2xl flex items-center justify-center mx-auto mb-4">
+              <AlertCircle className="w-8 h-8 text-destructive" />
+            </div>
+            <h2 className="text-xl font-bold text-foreground mb-2">Access Denied</h2>
+            <p className="text-muted-foreground mb-6">
+              You don't have permission to access this page. Only admins can manage user roles.
+            </p>
+            <Button onClick={() => navigate('/dashboard')} className="rounded-xl">
+              Back to Dashboard
+            </Button>
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
 
   const handleAddRole = async () => {
     if (!newUserId.trim()) {
